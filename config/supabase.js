@@ -1,9 +1,10 @@
 // Configuration Supabase pour ODC Landing Page
 // ========================================
 
-// Configuration Supabase (à remplacer par vos vraies clés)
-const SUPABASE_URL = 'https://vlsgynppildehnhptjzf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsc2d5bnBwaWxkZWhuaHB0anpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNDYwMDAsImV4cCI6MjA3NTkyMjAwMH0.xI2R07fvoBvIGOl3KP6deb4-LhilhV0qChrF6oxI1r4'; // Votre clé publique
+// Configuration Supabase - Variables d'environnement
+// IMPORTANT: Les vraies clés doivent être configurées dans Netlify Environment Variables
+const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'YOUR_SUPABASE_URL_HERE';
+const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY_HERE';
 
 // Initialisation du client Supabase
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

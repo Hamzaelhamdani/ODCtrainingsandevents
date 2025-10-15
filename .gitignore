@@ -5,6 +5,10 @@ node_modules/
 .env.production
 .env.development
 
+# Fichiers de configuration locale avec vraies clés
+env-local.js
+config-local.js
+
 # Fichiers système
 .DS_Store
 Thumbs.db

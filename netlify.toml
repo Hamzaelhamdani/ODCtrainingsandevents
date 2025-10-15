@@ -2,8 +2,8 @@
 # Configuration pour le déploiement automatique sur Netlify
 
 [build]
-  # Pas de commande de build nécessaire (site statique)
-  command = ""
+  # Commande de build pour injecter les variables d'environnement
+  command = "chmod +x build.sh && ./build.sh"
   # Dossier à publier (racine du projet)
   publish = "."
 
