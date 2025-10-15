@@ -1,6 +1,3 @@
-// ========================================
-// VARIABLES GLOBALES
-// ========================================
 
 let formations = [];
 let events = [];
@@ -8,9 +5,6 @@ let settings = {};
 let currentPage = 'dashboard';
 let currentEditId = null;
 
-// ========================================
-// INITIALISATION
-// ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeAdmin();
@@ -23,13 +17,9 @@ async function initializeAdmin() {
     console.log('🚀 Initialisation du back-office ODC');
 }
 
-// ========================================
-// CHARGEMENT DES DONNÉES
-// ========================================
 
 async function loadAllData() {
     try {
-        // Charger les données intégrées directement
         loadFormations();
         loadEvents();
         loadSettings();
@@ -45,7 +35,6 @@ async function loadAllData() {
 }
 
 function loadFormations() {
-    // Données intégrées pour éviter les problèmes CORS
     formations = [
         {
             "id": "1",
@@ -188,7 +177,6 @@ function loadFormations() {
 }
 
 function loadEvents() {
-    // Données intégrées pour éviter les problèmes CORS
     events = [
         {
             "id": "1",
@@ -256,7 +244,6 @@ function loadEvents() {
 }
 
 function loadSettings() {
-    // Données intégrées pour éviter les problèmes CORS
     settings = {
         "siteSettings": {
             "title": "Orange Digital Center - Formations & Événements du Mois",
@@ -307,12 +294,8 @@ function loadSettings() {
     return settings;
 }
 
-// ========================================
-// NAVIGATION ET INTERFACE
-// ========================================
 
 function setupEventListeners() {
-    // Navigation
     document.querySelectorAll('.nav-link[data-page]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -321,30 +304,25 @@ function setupEventListeners() {
         });
     });
 
-    // Sidebar toggle pour mobile
     const sidebarToggle = document.getElementById('sidebarToggle');
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', toggleSidebar);
     }
 
-    // Bouton ajouter
     const addNewBtn = document.getElementById('addNewBtn');
     if (addNewBtn) {
         addNewBtn.addEventListener('click', handleAddNew);
     }
 
-    // Modal
     const modalClose = document.getElementById('modalClose');
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
     }
 
-    // Recherche et filtres
     setupSearchAndFilters();
 }
 
 function showPage(pageName) {
-    // Mettre à jour la navigation
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
@@ -354,18 +332,15 @@ function showPage(pageName) {
         activeLink.closest('.nav-item').classList.add('active');
     }
 
-    // Cacher toutes les pages
     document.querySelectorAll('.content-page').forEach(page => {
         page.classList.remove('active');
     });
 
-    // Afficher la page sélectionnée
     const targetPage = document.getElementById(`${pageName}-page`);
     if (targetPage) {
         targetPage.classList.add('active');
     }
 
-    // Mettre à jour le titre
     const pageTitle = document.getElementById('pageTitle');
     const titles = {
         'dashboard': 'Tableau de bord',
@@ -380,7 +355,6 @@ function showPage(pageName) {
 
     currentPage = pageName;
 
-    // Charger le contenu de la page
     switch(pageName) {
         case 'formations':
             displayFormations();
@@ -399,9 +373,6 @@ function toggleSidebar() {
     sidebar.classList.toggle('show');
 }
 
-// ========================================
-// TABLEAU DE BORD
-// ========================================
 
 function updateDashboardStats() {
     const totalFormationsEl = document.getElementById('totalFormations');
@@ -427,7 +398,6 @@ function updateRecentActivities() {
     const container = document.getElementById('recentActivities');
     if (!container) return;
 
-    // Combiner et trier les activités récentes
     const allActivities = [
         ...formations.map(f => ({...f, type: 'formation', date: f.createdAt})),
         ...events.map(e => ({...e, type: 'event', date: e.createdAt}))
@@ -479,13 +449,9 @@ function updateUpcomingEvents() {
 }
 
 function displayFormations() {
-    // Appliquer les filtres actuels
     filterFormations();
 }
 
-// ========================================
-// GESTION DES FORMATIONS
-// ========================================
 
 function editFormation(id) {
     const formation = formations.find(f => f.id === id);
@@ -505,12 +471,8 @@ function deleteFormation(id) {
     }
 }
 
-// ========================================
-// GESTION DES ÉVÉNEMENTS
-// ========================================
 
 function displayEvents() {
-    // Appliquer les filtres actuels
     filterEvents();
 }
 
@@ -532,9 +494,6 @@ function deleteEvent(id) {
     }
 }
 
-// ========================================
-// MODALS
-// ========================================
 
 function showFormationModal(formation = null) {
     const modal = document.getElementById('modal');
@@ -635,7 +594,6 @@ function showFormationModal(formation = null) {
     modalBody.innerHTML = formHTML;
     modal.classList.add('show');
 
-    // Gérer la soumission du formulaire
     const form = document.getElementById('formationForm');
     form.addEventListener('submit', handleFormationSubmit);
 }
@@ -725,7 +683,6 @@ function showEventModal(event = null) {
     modalBody.innerHTML = formHTML;
     modal.classList.add('show');
 
-    // Gérer la soumission du formulaire
     const form = document.getElementById('eventForm');
     form.addEventListener('submit', handleEventSubmit);
 }
@@ -736,9 +693,6 @@ function closeModal() {
     currentEditId = null;
 }
 
-// ========================================
-// GESTION DES FORMULAIRES
-// ========================================
 
 function handleFormationSubmit(e) {
     e.preventDefault();
@@ -746,7 +700,6 @@ function handleFormationSubmit(e) {
     const formData = new FormData(e.target);
     const formationData = Object.fromEntries(formData);
     
-    // Ajouter les métadonnées
     formationData.id = currentEditId || generateId();
     formationData.currentParticipants = currentEditId ? 
         formations.find(f => f.id === currentEditId)?.currentParticipants || 0 : 0;
@@ -757,12 +710,10 @@ function handleFormationSubmit(e) {
     formationData.updatedAt = new Date().toISOString();
 
     if (currentEditId) {
-        // Modification
         const index = formations.findIndex(f => f.id === currentEditId);
         formations[index] = formationData;
         showNotification('Formation mise à jour avec succès', 'success');
     } else {
-        // Ajout
         formations.push(formationData);
         showNotification('Formation ajoutée avec succès', 'success');
     }
@@ -779,7 +730,6 @@ function handleEventSubmit(e) {
     const formData = new FormData(e.target);
     const eventData = Object.fromEntries(formData);
     
-    // Ajouter les métadonnées
     eventData.id = currentEditId || generateId();
     eventData.category = 'orange-fab';
     eventData.currentParticipants = currentEditId ? 
@@ -792,12 +742,10 @@ function handleEventSubmit(e) {
     eventData.updatedAt = new Date().toISOString();
 
     if (currentEditId) {
-        // Modification
         const index = events.findIndex(e => e.id === currentEditId);
         events[index] = eventData;
         showNotification('Événement mis à jour avec succès', 'success');
     } else {
-        // Ajout
         events.push(eventData);
         showNotification('Événement ajouté avec succès', 'success');
     }
@@ -808,9 +756,6 @@ function handleEventSubmit(e) {
     updateDashboardStats();
 }
 
-// ========================================
-// UTILITAIRES
-// ========================================
 
 function generateId() {
     return Date.now().toString();
@@ -839,34 +784,24 @@ function handleAddNew() {
     }
 }
 
-// ========================================
-// SAUVEGARDE (SIMULATION)
-// ========================================
 
 function saveFormations() {
-    // En production, ici on ferait un appel API
     localStorage.setItem('odc_formations', JSON.stringify(formations));
     console.log('Formations sauvegardées');
 }
 
 function saveEvents() {
-    // En production, ici on ferait un appel API
     localStorage.setItem('odc_events', JSON.stringify(events));
     console.log('Événements sauvegardés');
 }
 
 function saveSettings() {
-    // En production, ici on ferait un appel API
     localStorage.setItem('odc_settings', JSON.stringify(settings));
     console.log('Paramètres sauvegardés');
 }
 
-// ========================================
-// NOTIFICATIONS
-// ========================================
 
 function showNotification(message, type = 'info') {
-    // Créer la notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.innerHTML = `
@@ -878,32 +813,24 @@ function showNotification(message, type = 'info') {
         </button>
     `;
 
-    // Ajouter au DOM
     document.body.appendChild(notification);
 
-    // Auto-suppression après 5 secondes
     setTimeout(() => {
         notification.remove();
     }, 5000);
 
-    // Suppression au clic
     notification.querySelector('.notification-close').addEventListener('click', () => {
         notification.remove();
     });
 }
 
-// ========================================
-// RECHERCHE ET FILTRES
-// ========================================
 
 function setupSearchAndFilters() {
-    // Recherche formations
     const searchFormations = document.getElementById('searchFormations');
     if (searchFormations) {
         searchFormations.addEventListener('input', filterFormations);
     }
 
-    // Filtres formations
     const categoryFilter = document.getElementById('categoryFilter');
     const cityFilter = document.getElementById('cityFilter');
     
@@ -915,13 +842,11 @@ function setupSearchAndFilters() {
         cityFilter.addEventListener('change', filterFormations);
     }
 
-    // Recherche événements
     const searchEvents = document.getElementById('searchEvents');
     if (searchEvents) {
         searchEvents.addEventListener('input', filterEvents);
     }
 
-    // Filtre ville événements
     const eventsCityFilter = document.getElementById('eventsCityFilter');
     if (eventsCityFilter) {
         eventsCityFilter.addEventListener('change', filterEvents);
@@ -1036,7 +961,6 @@ function displayFilteredFormations(filteredFormations) {
 
     tableBody.innerHTML = formationsHTML;
     
-    // Afficher le compteur de résultats
     updateResultsCounter('formations', filteredFormations.length, formations.length);
 }
 
@@ -1097,12 +1021,10 @@ function displayFilteredEvents(filteredEvents) {
 
     tableBody.innerHTML = eventsHTML;
     
-    // Afficher le compteur de résultats
     updateResultsCounter('events', filteredEvents.length, events.length);
 }
 
 function updateResultsCounter(type, filteredCount, totalCount) {
-    // Chercher ou créer le conteneur pour le compteur
     const pageControls = document.querySelector(`#${type}-page .page-controls`);
     if (!pageControls) return;
     
@@ -1122,12 +1044,8 @@ function updateResultsCounter(type, filteredCount, totalCount) {
     }
 }
 
-// ========================================
-// PARAMÈTRES
-// ========================================
 
 function displaySettings() {
-    // Charger les paramètres généraux
     const form = document.getElementById('generalSettingsForm');
     if (form && settings.siteSettings) {
         const siteSettings = settings.siteSettings;
@@ -1138,15 +1056,12 @@ function displaySettings() {
         document.getElementById('heroSubtitle').value = siteSettings.heroSubtitle || '';
         document.getElementById('contactEmail').value = siteSettings.contactEmail || '';
         
-        // Gérer la soumission
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Sauvegarder les paramètres
             showNotification('Paramètres sauvegardés avec succès', 'success');
         });
     }
 
-    // Afficher les centres ODC
     displayOdcCenters();
 }
 

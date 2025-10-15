@@ -1,13 +1,6 @@
-// ========================================
-// SCRIPT DYNAMIQUE SUPABASE + FALLBACK - ODC LANDING PAGE
-// ========================================
-
 console.log('🚀 Script dynamique démarré');
-
-// Variables globales pour compatibilité avec le script calendar
 let formations = [];
 let events = [];
-
 function getCityDisplayName(city) {
     const cityNames = {
         'rabat': 'ODC Rabat',
@@ -17,11 +10,8 @@ function getCityDisplayName(city) {
     };
     return cityNames[city] || city;
 }
-
-// Fonction pour obtenir l'image par défaut selon le type
 function getDefaultImage(type, title) {
     const encodedTitle = encodeURIComponent(title);
-    
     if (type === 'ecole-du-code') {
         return `https://via.placeholder.com/400x180/007ACC/FFFFFF?text=${encodedTitle}`;
     } else if (type === 'fablab') {
@@ -31,57 +21,42 @@ function getDefaultImage(type, title) {
     }
     return `https://via.placeholder.com/400x180/6c757d/FFFFFF?text=${encodedTitle}`;
 }
-
-// Fonction pour charger les données depuis Supabase
 async function loadDataFromSupabase() {
     try {
         console.log('🔄 Tentative de chargement depuis Supabase...');
-        
-        // Vérifier si Supabase est disponible
         if (typeof window.supabase === 'undefined' || typeof supabase === 'undefined') {
             throw new Error('Supabase non disponible');
         }
-        
-        // Charger les formations
         const { data: formationsData, error: formationsError } = await supabase
             .from('formations')
             .select('*')
             .eq('status', 'active')
             .order('date_start', { ascending: true });
-            
-        // Charger les événements  
         const { data: eventsData, error: eventsError } = await supabase
             .from('events')
             .select('*')
             .eq('status', 'active')
             .order('date_start', { ascending: true });
-        
         if (formationsError) {
             console.warn('⚠️ Erreur formations Supabase:', formationsError.message);
         } else {
             formations = formationsData.map(f => ({ ...f, _origin: 'supabase' }));
             console.log(`✅ ${formations.length} formations chargées depuis Supabase`);
         }
-        
         if (eventsError) {
             console.warn('⚠️ Erreur événements Supabase:', eventsError.message);
         } else {
             events = eventsData.map(e => ({ ...e, _origin: 'supabase' }));
             console.log(`✅ ${events.length} événements chargés depuis Supabase`);
         }
-        
         return formations.length > 0 || events.length > 0;
-        
     } catch (error) {
         console.error('❌ Erreur lors du chargement Supabase:', error.message);
         return false;
     }
 }
-
-// Fonction de fallback si Supabase ne fonctionne pas
 function loadFallbackData() {
     console.log('📦 Chargement des données de fallback...');
-    
     formations = [
         {
             "id": "fallback-1",
@@ -186,7 +161,6 @@ function loadFallbackData() {
             "_origin": "fallback"
         }
     ];
-    
     events = [
         {
             "id": "event-fallback-1",
@@ -249,19 +223,14 @@ function loadFallbackData() {
             "_origin": "fallback"
         }
     ];
-    
     console.log('📦 Données de fallback chargées:', formations.length, 'formations,', events.length, 'événements');
 }
-
 function loadContent() {
     console.log('📦 Génération du contenu...');
-    
-    // École du Code
     const formationsContainer = document.getElementById('formations-container');
     if (formationsContainer) {
         const ecoleFormations = formations.filter(f => f.category === 'ecole-du-code');
         console.log('🎓 Formations École du Code:', ecoleFormations.length);
-        
         const formationsHTML = ecoleFormations.map(formation => {
             const startDate = new Date(formation.date_start);
             const endDate = new Date(formation.date_end);
@@ -269,10 +238,7 @@ function loadContent() {
             const dateRange = startDate.getTime() !== endDate.getTime() ? 
                 ` - ${endDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' })}` : '';
             const cityName = getCityDisplayName(formation.city);
-            
-            // Utiliser l'image Supabase ou l'image par défaut
             const imageUrl = formation.image || getDefaultImage('ecole-du-code', formation.title);
-            
             return `
                 <div class="formation-card fade-in" data-city="${formation.city}">
                     <div class="formation-image">
@@ -293,17 +259,13 @@ function loadContent() {
                 </div>
             `;
         }).join('');
-        
         formationsContainer.innerHTML = formationsHTML;
         console.log('✅ Formations École du Code générées');
     }
-    
-    // FabLab
     const fablabContainer = document.getElementById('fablab-container');
     if (fablabContainer) {
         const fablabFormations = formations.filter(f => f.category === 'fablab');
         console.log('🔧 Formations FabLab:', fablabFormations.length);
-        
         const fablabHTML = fablabFormations.map(formation => {
             const startDate = new Date(formation.date_start);
             const endDate = new Date(formation.date_end);
@@ -311,10 +273,7 @@ function loadContent() {
             const dateRange = startDate.getTime() !== endDate.getTime() ? 
                 ` - ${endDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' })}` : '';
             const cityName = getCityDisplayName(formation.city);
-            
-            // Utiliser l'image Supabase ou l'image par défaut
             const imageUrl = formation.image || getDefaultImage('fablab', formation.title);
-            
             return `
                 <div class="formation-card fade-in" data-city="${formation.city}">
                     <div class="formation-image">
@@ -335,24 +294,17 @@ function loadContent() {
                 </div>
             `;
         }).join('');
-        
         fablabContainer.innerHTML = fablabHTML;
         console.log('✅ Formations FabLab générées');
     }
-    
-    // Événements
     const eventsContainer = document.getElementById('events-container');
     if (eventsContainer) {
         console.log('🎪 Événements:', events.length);
-        
         const eventsHTML = events.map(event => {
             const startDate = new Date(event.date_start);
             const dateText = startDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
             const cityName = getCityDisplayName(event.city);
-            
-            // Utiliser l'image Supabase ou l'image par défaut
             const imageUrl = event.image || getDefaultImage('event', event.title);
-            
             return `
                 <div class="event-card fade-in" data-city="${event.city}">
                     <div class="event-image">
@@ -375,82 +327,51 @@ function loadContent() {
                 </div>
             `;
         }).join('');
-        
         eventsContainer.innerHTML = eventsHTML;
         console.log('✅ Événements générés');
     }
-    
-    // Animer les éléments fade-in
     animateFadeInElements();
-    
-    // Déclencher la génération du calendrier si disponible
     if (typeof generateCalendarData === 'function') {
         console.log('📅 Déclenchement de la génération du calendrier...');
         setTimeout(generateCalendarData, 300);
     }
 }
-
-// Fonction pour animer les éléments fade-in
 function animateFadeInElements() {
     const fadeElements = document.querySelectorAll('.fade-in');
     console.log('✨ Animation de', fadeElements.length, 'éléments fade-in');
-    
     fadeElements.forEach((element, index) => {
         setTimeout(() => {
             element.classList.add('visible');
         }, index * 100);
     });
 }
-
-// Démarrage de l'application
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Application ODC démarrée - Tentative Supabase...');
-    
-    // Essayer de charger depuis Supabase
     const supabaseSuccess = await loadDataFromSupabase();
-    
-    // Si Supabase échoue ou ne retourne rien, utiliser le fallback
     if (!supabaseSuccess || (formations.length === 0 && events.length === 0)) {
         console.warn('⚠️ Supabase indisponible ou vide - Chargement des données de fallback');
         loadFallbackData();
     }
-    
-    // Générer le contenu
     setTimeout(() => {
         loadContent();
         setupFilters(); // Ajouter la gestion des filtres
     }, 100);
-    
     console.log('✅ Application initialisée');
 });
-
-// Fonction pour configurer les filtres
 function setupFilters() {
     console.log('🔍 Configuration des filtres...');
-    
     const filterButtons = document.querySelectorAll('.filter-btn');
-    
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Retirer la classe active de tous les boutons
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Ajouter la classe active au bouton cliqué
             this.classList.add('active');
-            
-            // Récupérer la ville sélectionnée
             const selectedCity = this.getAttribute('data-city');
             console.log('🏙️ Filtre sélectionné:', selectedCity);
-            
-            // Appliquer le filtre
             applyFilter(selectedCity);
         });
     });
 }
-
-// Fonction pour appliquer le filtre
 function applyFilter(city) {
-    // Filtrer les cartes de formations
     const formationCards = document.querySelectorAll('.formation-card');
     formationCards.forEach(card => {
         const cardCity = card.getAttribute('data-city');
@@ -462,8 +383,6 @@ function applyFilter(city) {
             card.classList.remove('visible');
         }
     });
-    
-    // Filtrer les cartes d'événements
     const eventCards = document.querySelectorAll('.event-card');
     eventCards.forEach(card => {
         const cardCity = card.getAttribute('data-city');
@@ -475,17 +394,11 @@ function applyFilter(city) {
             card.classList.remove('visible');
         }
     });
-    
-    // Mettre à jour le calendrier si la fonction existe
     if (typeof updateCalendarForCity === 'function') {
         updateCalendarForCity(city);
     }
-    
-    // Compter les éléments visibles
     const visibleFormations = document.querySelectorAll('.formation-card[style*="flex"]').length;
     const visibleEvents = document.querySelectorAll('.event-card[style*="flex"]').length;
-    
     console.log(`✅ Filtre appliqué: ${visibleFormations} formations, ${visibleEvents} événements visibles`);
 }
-
 console.log('📝 Script dynamique configuré');

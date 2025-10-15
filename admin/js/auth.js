@@ -1,4 +1,3 @@
-// Script d'authentification pour le back office
 class AuthManager {
     constructor() {
         console.log('🔧 Initialisation AuthManager...');
@@ -10,7 +9,6 @@ class AuthManager {
     async initializeWhenReady() {
         console.log('⏳ Attente du client Supabase...');
         
-        // Attendre que supabaseClient soit disponible
         let attempts = 0;
         while (!window.supabaseClient && attempts < 100) {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -43,7 +41,6 @@ class AuthManager {
         console.log('🚀 Initialisation de l\'authentification...');
         
         try {
-            // Vérifier si l'utilisateur est déjà connecté
             const { data: { session }, error } = await this.supabase.auth.getSession();
             
             if (error) {
@@ -60,7 +57,6 @@ class AuthManager {
             
             console.log('ℹ️ Aucune session existante');
 
-            // Écouter les changements d'authentification
             this.supabase.auth.onAuthStateChange((event, session) => {
                 console.log('🔄 Changement d\'état auth:', event);
                 if (event === 'SIGNED_IN') {
@@ -99,7 +95,6 @@ class AuthManager {
         const loadingMessage = document.getElementById('loadingMessage');
         const loginBtn = document.getElementById('loginBtn');
 
-        // Reset messages
         errorMessage.style.display = 'none';
         loadingMessage.style.display = 'block';
         loginBtn.disabled = true;
@@ -114,10 +109,8 @@ class AuthManager {
                 throw error;
             }
 
-            // Vérifier si l'utilisateur a les permissions admin
             if (await this.checkAdminPermissions(data.user)) {
                 console.log('✅ Connexion administrateur réussie');
-                // La redirection se fera automatiquement via onAuthStateChange
             } else {
                 await this.supabase.auth.signOut();
                 throw new Error('Accès non autorisé. Vous n\'avez pas les permissions administrateur.');
@@ -147,7 +140,6 @@ class AuthManager {
         try {
             console.log('🔍 Vérification des permissions pour:', user.email);
             
-            // Option 1: Vérifier par email dans une liste prédéfinie (TEMPORAIRE POUR TEST)
             const adminEmails = [
                 'admin@orangedigitalcenter.ma',
                 'backoffice@odc.ma',
@@ -159,7 +151,6 @@ class AuthManager {
                 return true;
             }
 
-            // Option 2: Vérifier dans une table Supabase 'admin_users' (désactivé temporairement)
             /*
             const { data, error } = await this.supabase
                 .from('admin_users')
@@ -232,7 +223,6 @@ class AuthManager {
 
             console.log('✅ Session trouvée pour:', session.user.email);
 
-            // Vérifier les permissions admin
             const hasPermission = await this.checkAdminPermissions(session.user);
             if (!hasPermission) {
                 console.log('❌ Permissions insuffisantes pour:', session.user.email);
@@ -253,22 +243,18 @@ class AuthManager {
     }
 }
 
-// Initialiser le gestionnaire d'authentification
 const authManager = new AuthManager();
 
-// Fonction pour protéger les pages admin
 async function protectAdminPage() {
     const isAuthenticated = await authManager.requireAuth();
     if (!isAuthenticated) {
         return false;
     }
     
-    // Ajouter le bouton de déconnexion
     addLogoutButton();
     return true;
 }
 
-// Ajouter un bouton de déconnexion
 function addLogoutButton() {
     const header = document.querySelector('.admin-header');
     if (header && !document.getElementById('logoutBtn')) {
@@ -300,6 +286,5 @@ function addLogoutButton() {
     }
 }
 
-// Exposer pour utilisation globale
 window.authManager = authManager;
 window.protectAdminPage = protectAdminPage;

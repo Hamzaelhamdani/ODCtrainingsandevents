@@ -1,5 +1,3 @@
-/* Reset et base styles */
-* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -18,7 +16,6 @@ body {
     padding: 0 20px;
 }
 
-/* Header - Style identique au site officiel */
 .header {
     background-color: #1a1a1a;
     color: white;
@@ -36,7 +33,6 @@ body {
     height: 70px;
 }
 
-/* Logo ODC officiel */
 .nav-brand {
     display: flex;
     align-items: center;
@@ -85,7 +81,6 @@ body {
     color: white;
 }
 
-/* Navigation header */
 .header-nav {
     display: flex;
     gap: 2rem;
@@ -105,7 +100,6 @@ body {
     border-bottom-color: #FF7900;
 }
 
-/* ========================================
    CALENDRIER MODERNE AVEC CAROUSEL
 ======================================== */
 
@@ -232,7 +226,6 @@ body {
     color: white;
 }
 
-/* Affichage des événements */
 .events-display {
     background: white;
     border-radius: 20px;
@@ -389,7 +382,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Section des prochains événements */
 .upcoming-events {
     border-top: 2px solid #e9ecef;
     padding-top: 2rem;
@@ -442,7 +434,6 @@ body {
     width: 12px;
 }
 
-/* Responsive pour le calendrier carousel */
 @media (max-width: 768px) {
     .dates-carousel-container {
         margin: 2rem 0;
@@ -483,7 +474,6 @@ body {
     }
 }
 
-/* Style pour aucun événement */
 .no-events {
     text-align: center;
     padding: 3rem 2rem;
@@ -502,7 +492,6 @@ body {
     margin: 0;
 }
 
-/* Loader pour les événements */
 .loading-events {
     text-align: center;
     padding: 3rem 2rem;
@@ -521,7 +510,6 @@ body {
     font-style: italic;
 }
 
-/* Styles pour le calendrier corrigé */
 .loading-dates {
     display: flex;
     flex-direction: column;
@@ -636,7 +624,6 @@ body {
     margin: 0.5rem 0 0 0;
 }
 
-/* Styles pour les prochains événements */
 .no-upcoming-events {
     text-align: center;
     padding: 1.5rem;
@@ -717,7 +704,6 @@ body {
     margin-right: 0.25rem;
 }
 
-/* Hero Section - Style épuré comme le site officiel */
 .hero {
     background-color: #f8f9fa;
     padding: 4rem 0;
@@ -762,7 +748,6 @@ body {
     background: #e66a00;
 }
 
-/* Filters Section - Style onglets comme le site officiel */
 .filters-section {
     padding: 0;
     background: white;
@@ -827,7 +812,6 @@ body {
     background: #FF7900;
 }
 
-/* Sections principales */
 .formations-section,
 .fablab-section,
 .orangefab-section {
@@ -859,14 +843,12 @@ body {
     align-items: stretch; /* Force toutes les cartes à avoir la même hauteur */
 }
 
-/* Optimisation spécifique pour les événements */
 .events-grid {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2.5rem;
     align-items: stretch; /* Force l'alignement des cartes d'événements */
 }
 
-/* Cartes de formation - Style sobre et professionnel */
 .formation-card {
     background: white;
     border: 1px solid #e9ecef;
@@ -986,7 +968,6 @@ body {
     background: #e66a00;
 }
 
-/* Orange Fab Events - Style carte moderne */
 .orangefab-section {
     padding: 3rem 0;
     background: #f8f9fa;
@@ -1004,7 +985,6 @@ body {
     flex-direction: column;
 }
 
-/* Positionner le bouton en bas pour les événements */
 .event-card .inscription-btn {
     margin-top: auto;
 }
@@ -1021,7 +1001,6 @@ body {
     object-fit: cover;
 }
 
-/* Placeholder pour événements sans image */
 .event-placeholder {
     width: 100%;
     height: 180px;
@@ -1052,7 +1031,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Header de la carte événement - Badge à droite, titre à gauche */
 .event-card .card-header {
     padding: 1.25rem 1.5rem 0.75rem 1.5rem;
 }
@@ -1075,13 +1053,11 @@ body {
     text-align: left;
 }
 
-/* Badge Orange Fab positionné à droite */
 .event-card .card-header .event-badge {
     flex-shrink: 0;
     align-self: flex-start;
 }
 
-/* Badge Orange Fab */
 .event-badge {
     background: #FF7900;
     color: white;
@@ -1095,7 +1071,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Informations de l'événement - Toutes alignées à gauche */
 .event-info {
     padding: 0 1.5rem;
     margin: 0.5rem 0 1rem 0;
@@ -1126,7 +1101,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Description de l'événement - Alignée à gauche */
 .event-description {
     color: #666;
     margin: 0 1.5rem 1rem 1.5rem;
@@ -1158,7 +1132,6 @@ body {
     background: #e66a00;
 }
 
-/* Footer - Style identique au site officiel */
 .footer {
     background: #1a1a1a;
     color: #ccc;
@@ -1322,7 +1295,6 @@ body {
     color: #FF7900;
 }
 
-/* Animations */
 .fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -1334,7 +1306,6 @@ body {
     transform: translateY(0);
 }
 
-/* Message aucune formation */
 .no-formations {
     grid-column: 1 / -1;
     text-align: center;
@@ -1359,12 +1330,10 @@ body {
     font-size: 1rem;
 }
 
-/* Hidden class for filtering */
 .hidden {
     display: none !important;
 }
 
-/* Événements multi-jours dans le calendrier */
 .calendar-event-multi-day {
     position: relative;
     border-left: 4px solid #FF7900 !important;
@@ -1391,7 +1360,6 @@ body {
     margin-top: 2px;
 }
 
-/* Notifications */
 .notification {
     position: fixed;
     top: 20px;
@@ -1413,7 +1381,6 @@ body {
 .notification-error { background: #dc3545; }
 .notification-info { background: #FF7900; }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .header .container {
         flex-direction: column;
@@ -1532,12 +1499,10 @@ body {
     }
 }
 
-/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
 }
 
-/* Focus states for accessibility */
 .filter-btn:focus,
 .inscription-btn:focus,
 .event-btn:focus {
@@ -1545,7 +1510,6 @@ html {
     outline-offset: 2px;
 }
 
-/* Print styles */
 @media print {
     .header,
     .newsletter-section,
@@ -1560,7 +1524,6 @@ html {
     }
 }
 
-/* ========================================
    POPUP DÉTAILS FORMATIONS
 ======================================== */
 

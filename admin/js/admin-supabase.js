@@ -1,6 +1,3 @@
-// ========================================
-// GESTION D'ERREURS GLOBALE
-// ========================================
 
 window.addEventListener('error', function(e) {
     console.error('❌ Erreur JavaScript globale:', e.error);
@@ -9,18 +6,13 @@ window.addEventListener('error', function(e) {
     console.error('  Colonne:', e.colno);
 });
 
-// ========================================
-// ADMIN ODC - AVEC SUPABASE
-// ========================================
 
-// Variables globales
 let formations = [];
 let events = [];
 let settings = {};
 let currentEditId = null;
 let currentPage = 'dashboard';
 
-// Variables pour le filtrage
 let filteredFormations = [];
 let currentFilters = {
     search: '',
@@ -28,14 +20,10 @@ let currentFilters = {
     city: ''
 };
 
-// ========================================
-// INITIALISATION
-// ========================================
 
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Initialisation de l\'interface admin...');
     
-    // Tester la connexion Supabase
     const connectionOk = await window.SupabaseAPI.testConnection();
     if (!connectionOk) {
         showNotification('Erreur de connexion à Supabase. Vérifiez votre configuration.', 'error');
@@ -44,7 +32,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         showNotification('Connexion Supabase établie avec succès !', 'success');
     }
     
-    // Initialiser le stockage d'images
     try {
         console.log('📸 Vérification du stockage d\'images...');
         const bucketReady = await window.SupabaseAPI.createImageBucket();
@@ -60,10 +47,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         showNotification('Mode local activé - Stockage cloud indisponible', 'info');
     }
     
-    // Charger les données
     await loadAllData();
     
-    // Initialiser l'interface
     initializeNavigation();
     showPage('dashboard');
     updateDashboardStats();
@@ -71,9 +56,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('✅ Interface admin initialisée');
 });
 
-// ========================================
-// CHARGEMENT DES DONNÉES
-// ========================================
 
 function getDefaultSettings() {
     return {
@@ -95,10 +77,8 @@ async function loadAllData() {
     try {
         console.log('🔄 Chargement des données...');
         
-        // Vérifier que SupabaseAPI est disponible
         if (!window.SupabaseAPI) {
             console.error('❌ SupabaseAPI non disponible, attente...');
-            // Attendre que SupabaseAPI soit disponible
             let attempts = 0;
             while (!window.SupabaseAPI && attempts < 50) {
                 await new Promise(resolve => setTimeout(resolve, 100));
@@ -107,7 +87,6 @@ async function loadAllData() {
             
             if (!window.SupabaseAPI) {
                 console.error('❌ Impossible de charger SupabaseAPI');
-                // Utiliser des données par défaut
                 formations = [];
                 events = [];
                 settings = getDefaultSettings();
@@ -118,7 +97,6 @@ async function loadAllData() {
         
         console.log('✅ SupabaseAPI disponible, chargement des données...');
         
-        // Charger en parallèle
         const [loadedFormations, loadedEvents, loadedSettings] = await Promise.all([
             window.SupabaseAPI.getFormations(),
             window.SupabaseAPI.getEvents(),
@@ -129,12 +107,10 @@ async function loadAllData() {
         events = loadedEvents;
         settings = loadedSettings;
         
-        // Initialiser les formations filtrées
         filteredFormations = [...formations];
         
         console.log(`✅ ${formations.length} formations, ${events.length} événements chargés`);
         
-        // Rafraîchir l'affichage
         loadFormationsTable();
         loadEventsTable();
         
@@ -144,59 +120,46 @@ async function loadAllData() {
     }
 }
 
-// ========================================
-// NAVIGATION
-// ========================================
 
 function initializeNavigation() {
-    // Navigation dans la sidebar
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Retirer la classe active de tous les liens
             navLinks.forEach(l => l.classList.remove('active'));
-            // Ajouter la classe active au lien cliqué
             this.classList.add('active');
             
-            // Afficher la page correspondante
             const page = this.getAttribute('data-page');
             showPage(page);
         });
     });
     
-    // Bouton d'ajout
     const addButton = document.getElementById('addNewBtn');
     if (addButton) {
         addButton.addEventListener('click', handleAddButton);
     }
 
-    // Sidebar toggle pour mobile
     const sidebarToggle = document.getElementById('sidebarToggle');
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', toggleSidebar);
     }
 
-    // Bouton test stockage
     const testStorageBtn = document.getElementById('testStorageBtn');
     if (testStorageBtn) {
         testStorageBtn.addEventListener('click', handleTestStorage);
     }
 
-    // Bouton test événements
     const testEventsBtn = document.getElementById('testEventsBtn');
     if (testEventsBtn) {
         testEventsBtn.addEventListener('click', handleTestEvents);
     }
 
-    // Modal close
     const modalClose = document.getElementById('modalClose');
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
     }
 
-    // Gestionnaires de filtrage
     setupFilterHandlers();
 }
 
@@ -209,11 +172,9 @@ function showPage(pageId) {
     console.log(`🔄 Navigation vers la page: ${pageId}`);
     currentPage = pageId;
     
-    // Masquer toutes les pages
     const pages = document.querySelectorAll('.content-page');
     pages.forEach(page => page.classList.remove('active'));
     
-    // Afficher la page demandée
     const targetPage = document.getElementById(`${pageId}-page`);
     if (targetPage) {
         targetPage.classList.add('active');
@@ -222,10 +183,8 @@ function showPage(pageId) {
         console.error(`❌ Page ${pageId}-page non trouvée`);
     }
     
-    // Mettre à jour le titre et le bouton d'ajout
     updatePageHeader(pageId);
     
-    // Actions spécifiques par page
     switch(pageId) {
         case 'dashboard':
             updateDashboardStats();
@@ -262,12 +221,8 @@ function updatePageHeader(pageId) {
     }
 }
 
-// ========================================
-// DASHBOARD
-// ========================================
 
 function updateDashboardStats() {
-    // Mettre à jour les statistiques avec vérification des éléments
     const totalFormationsEl = document.getElementById('totalFormations');
     const totalEventsEl = document.getElementById('totalEvents');
     const totalParticipantsEl = document.getElementById('totalParticipants');
@@ -292,7 +247,6 @@ function updateDashboardStats() {
         participants: totalParticipantsEl?.textContent
     });
     
-    // Mettre à jour les activités récentes
     updateRecentActivities();
     updateUpcomingEvents();
 }
@@ -301,7 +255,6 @@ function updateRecentActivities() {
     const container = document.getElementById('recentActivities');
     if (!container) return;
 
-    // Combiner et trier les activités récentes
     const allActivities = [
         ...formations.map(f => ({...f, type: 'formation', date: f.created_at})),
         ...events.map(e => ({...e, type: 'event', date: e.created_at}))
@@ -352,9 +305,6 @@ function updateUpcomingEvents() {
     container.innerHTML = upcomingHTML || '<p class="text-muted">Aucun événement à venir</p>';
 }
 
-// ========================================
-// FONCTION DE DÉBOGAGE
-// ========================================
 
 function debugFunctions() {
     const functionsToCheck = [
@@ -373,18 +323,13 @@ function debugFunctions() {
     });
 }
 
-// Ajout des fonctions au window pour le debug
 window.debugFunctions = debugFunctions;
 
-// ========================================
-// GESTION DES FORMATIONS
-// ========================================
 
 function loadFormationsTable() {
     const tableBody = document.getElementById('formationsTableBody');
     if (!tableBody) return;
 
-    // Utiliser les formations filtrées ou toutes les formations si pas de filtre
     const displayFormations = filteredFormations.length > 0 || 
         currentFilters.search || 
         currentFilters.category !== 'all' || 
@@ -468,7 +413,6 @@ async function saveFormation(formationData) {
     try {
         console.log('🔧 Validation et transformation des données pour Supabase...');
         
-        // Validation des longueurs selon les contraintes de la base
         const validationErrors = [];
         
         if (!formationData.title || formationData.title.length > 255) {
@@ -495,7 +439,6 @@ async function saveFormation(formationData) {
             throw new Error('Erreurs de validation:\n' + validationErrors.join('\n'));
         }
         
-        // Convertir les données au format Supabase avec nettoyage
         const supabaseData = {
             id: currentEditId || crypto.randomUUID(),
             title: formationData.title.trim().substring(0, 255),
@@ -522,7 +465,6 @@ async function saveFormation(formationData) {
         
         const savedFormation = await window.SupabaseAPI.saveFormation(supabaseData);
         
-        // Mettre à jour les données locales
         const existingIndex = formations.findIndex(f => f.id === savedFormation.id);
         if (existingIndex >= 0) {
             formations[existingIndex] = savedFormation;
@@ -530,7 +472,6 @@ async function saveFormation(formationData) {
             formations.push(savedFormation);
         }
         
-        // Rafraîchir l'affichage
         loadFormationsTable();
         updateDashboardStats();
         closeModal();
@@ -542,7 +483,6 @@ async function saveFormation(formationData) {
         
         let errorMessage = 'Erreur lors de la sauvegarde de la formation';
         
-        // Messages d'erreur plus spécifiques
         if (error.message.includes('validation')) {
             errorMessage = error.message;
         } else if (error.message.includes('value too long')) {
@@ -559,9 +499,6 @@ async function saveFormation(formationData) {
     }
 }
 
-// ========================================
-// UTILITAIRES
-// ========================================
 
 function getCityName(city) {
     const cityNames = {
@@ -574,7 +511,6 @@ function getCityName(city) {
 }
 
 function showNotification(message, type = 'info') {
-    // Créer la notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     
@@ -590,10 +526,8 @@ function showNotification(message, type = 'info') {
         </button>
     `;
     
-    // Ajouter au DOM
     document.body.appendChild(notification);
     
-    // Supprimer automatiquement après 5 secondes
     setTimeout(() => {
         if (notification.parentElement) {
             notification.remove();
@@ -609,9 +543,6 @@ function closeModal() {
     currentEditId = null;
 }
 
-// ========================================
-// GESTION DES IMAGES
-// ========================================
 
 function createImageUploader(containerId, currentImageUrl = '') {
     const container = document.getElementById(containerId);
@@ -650,7 +581,6 @@ function createImageUploader(containerId, currentImageUrl = '') {
         <input type="file" id="${containerId}-input" accept="image/*" style="display: none;">
     `;
     
-    // Gérer les événements
     setupImageUploadEvents(containerId);
 }
 
@@ -658,19 +588,16 @@ function setupImageUploadEvents(containerId) {
     const dropzone = document.getElementById(`${containerId}-dropzone`);
     const fileInput = document.getElementById(`${containerId}-input`);
     
-    // Clic sur la zone de drop
     dropzone.addEventListener('click', () => {
         fileInput.click();
     });
     
-    // Changement de fichier
     fileInput.addEventListener('change', (e) => {
         if (e.target.files && e.target.files[0]) {
             handleImageUpload(e.target.files[0], containerId);
         }
     });
     
-    // Drag & Drop
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropzone.classList.add('dragover');
@@ -693,36 +620,30 @@ function setupImageUploadEvents(containerId) {
 
 async function handleImageUpload(file, containerId) {
     try {
-        // Vérifier le type de fichier
         if (!file.type.startsWith('image/')) {
             showNotification('Veuillez sélectionner un fichier image valide', 'error');
             return;
         }
         
-        // Vérifier la taille (5MB max)
         if (file.size > 5 * 1024 * 1024) {
             showNotification('L\'image ne doit pas dépasser 5MB', 'error');
             return;
         }
         
-        // Afficher la progression
         const progressContainer = document.getElementById(`${containerId}-progress`);
         const progressBar = document.getElementById(`${containerId}-progress-bar`);
         
         progressContainer.style.display = 'block';
         progressBar.style.width = '30%';
         
-        // Compresser l'image
         console.log('🔄 Compression de l\'image...');
         const compressedFile = await window.SupabaseAPI.compressImage(file);
         progressBar.style.width = '60%';
         
-        // Uploader vers Supabase
         console.log('📤 Upload vers Supabase...');
         const imageUrl = await window.SupabaseAPI.uploadImage(compressedFile, 'formations');
         progressBar.style.width = '100%';
         
-        // Afficher l'aperçu
         setTimeout(() => {
             showImagePreview(imageUrl, containerId);
             progressContainer.style.display = 'none';
@@ -731,7 +652,6 @@ async function handleImageUpload(file, containerId) {
         
         showNotification('Image uploadée avec succès !', 'success');
         
-        // Stocker l'URL pour la sauvegarde
         const hiddenInput = document.getElementById('image') || 
                            document.getElementById('eventImage');
         if (hiddenInput) {
@@ -742,7 +662,6 @@ async function handleImageUpload(file, containerId) {
         console.error('❌ Erreur lors de l\'upload:', error);
         showNotification('Erreur lors de l\'upload de l\'image', 'error');
         
-        // Cacher la progression
         const progressContainer = document.getElementById(`${containerId}-progress`);
         progressContainer.style.display = 'none';
     }
@@ -779,10 +698,8 @@ async function removeImage(containerId) {
             await window.SupabaseAPI.deleteImage(preview.src);
         }
         
-        // Réinitialiser l'uploader
         createImageUploader(containerId);
         
-        // Vider le champ caché
         const hiddenInput = document.getElementById('image') || 
                            document.getElementById('eventImage');
         if (hiddenInput) {
@@ -797,21 +714,16 @@ async function removeImage(containerId) {
     }
 }
 
-// ========================================
-// GESTION DES MODALS ET FORMULAIRES
-// ========================================
 
 function handleAddButton() {
     console.log('🔥 Bouton Ajouter cliqué - Page actuelle:', currentPage);
     
-    // Debug supplémentaire
     const activeNavLink = document.querySelector('.nav-link.active');
     const activePage = document.querySelector('.content-page.active');
     console.log('🔍 Debug navigation:');
     console.log('  - Lien actif:', activeNavLink ? activeNavLink.getAttribute('data-page') : 'aucun');
     console.log('  - Page active:', activePage ? activePage.id : 'aucune');
     
-    // Réinitialiser l'ID d'édition pour un nouvel élément
     currentEditId = null;
     
     switch(currentPage) {
@@ -835,7 +747,6 @@ async function handleTestEvents() {
     try {
         showNotification('🔍 Test du chargement des événements...', 'info');
         
-        // Forcer le rechargement des événements
         console.log('📅 Chargement forcé des événements...');
         await loadEventsTable();
         
@@ -851,14 +762,11 @@ async function handleTestStorage() {
     console.log('🔍 Test de connexion Supabase Storage demandé');
     
     try {
-        // Afficher un message de test en cours
         showNotification('🔍 Test de connexion au stockage cloud...', 'info');
         
-        // Tester la connexion au bucket
         const bucketReady = await window.SupabaseAPI.createImageBucket();
         
         if (bucketReady) {
-            // Test supplémentaire : essayer de lister les images existantes
             try {
                 const { data, error } = await supabase.storage
                     .from('odc-images')
@@ -869,7 +777,6 @@ async function handleTestStorage() {
                 console.log('📁 Images existantes dans le bucket:', data);
                 showNotification(`✅ Connexion réussie - Bucket "odc-images" opérationnel (${data.length} images trouvées)`, 'success');
                 
-                // Afficher quelques URLs d'exemple si des images existent
                 if (data.length > 0) {
                     data.slice(0, 3).forEach((file, index) => {
                         const { data: urlData } = supabase.storage
@@ -902,7 +809,6 @@ function showFormationModal(formation = null) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     
-    // Configuration du titre du modal
     modalTitle.textContent = formation ? 'Modifier la formation' : 'Nouvelle formation';
     modalTitle.innerHTML = `
         <i class="fas fa-graduation-cap"></i>
@@ -1032,12 +938,10 @@ function showFormationModal(formation = null) {
     modalBody.innerHTML = formHTML;
     modal.classList.add('show');
     
-    // Initialiser l'uploader d'images spécifique aux formations
     setTimeout(() => {
         createFormationImageUploader('formationImageUploader', formation?.image || '');
     }, 100);
     
-    // Gérer la soumission du formulaire
     const form = document.getElementById('formationForm');
     form.addEventListener('submit', handleFormationSubmit);
     
@@ -1053,7 +957,6 @@ async function handleFormationSubmit(e) {
         
         console.log('📝 Données du formulaire:', formationData);
         
-        // Validation des champs obligatoires et formats
         if (!formationData.title?.trim()) {
             showNotification('Le titre est obligatoire', 'error');
             return;
@@ -1079,7 +982,6 @@ async function handleFormationSubmit(e) {
             return;
         }
         
-        // Validation des dates
         const startDate = new Date(formationData.dateStart);
         const endDate = new Date(formationData.dateEnd || formationData.dateStart);
         
@@ -1093,7 +995,6 @@ async function handleFormationSubmit(e) {
             return;
         }
         
-        // Validation du nombre de participants
         const maxParticipants = parseInt(formationData.maxParticipants);
         if (isNaN(maxParticipants) || maxParticipants < 1) {
             showNotification('Le nombre maximum de participants doit être supérieur à 0', 'error');
@@ -1110,9 +1011,6 @@ async function handleFormationSubmit(e) {
     }
 }
 
-// ========================================
-// GESTION DES IMAGES SPÉCIALISÉE
-// ========================================
 
 function createFormationImageUploader(containerId, currentImage = '') {
     const container = document.getElementById(containerId);
@@ -1148,7 +1046,6 @@ function createFormationImageUploader(containerId, currentImage = '') {
     
     container.innerHTML = uploaderHTML;
     
-    // Événements pour l'upload
     const uploadArea = document.getElementById('formationUploadArea');
     const imageInput = document.getElementById('formationImageInput');
     const imageField = document.getElementById('formationImage');
@@ -1162,7 +1059,6 @@ function createFormationImageUploader(containerId, currentImage = '') {
         }
     });
     
-    // Drag & Drop
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -1182,7 +1078,6 @@ function createFormationImageUploader(containerId, currentImage = '') {
         }
     });
     
-    // Mettre à jour le champ caché si une image est déjà sélectionnée
     if (currentImage && imageField) {
         imageField.value = currentImage;
     }
@@ -1190,7 +1085,6 @@ function createFormationImageUploader(containerId, currentImage = '') {
 
 async function handleFormationImageUpload(file) {
     try {
-        // Validation du fichier
         if (!file.type.startsWith('image/')) {
             showNotification('Veuillez sélectionner un fichier image valide', 'error');
             return;
@@ -1204,19 +1098,16 @@ async function handleFormationImageUpload(file) {
         console.log('📸 Upload d\'image formation vers Supabase:', file.name);
         showNotification('Upload de l\'image de formation...', 'info');
         
-        // Afficher un aperçu immédiat pendant l'upload
         const reader = new FileReader();
         reader.onload = (e) => {
             updateFormationImagePreview(e.target.result, true); // true = preview temporaire
         };
         reader.readAsDataURL(file);
         
-        // Essayer l'upload vers Supabase Storage
         try {
             const imageUrl = await window.SupabaseAPI.uploadImage(file, 'formations');
             
             if (imageUrl) {
-                // Mettre à jour avec l'URL définitive de Supabase
                 updateFormationImagePreview(imageUrl, false); // false = URL définitive
                 showNotification('Image de formation uploadée avec succès !', 'success');
                 return;
@@ -1224,7 +1115,6 @@ async function handleFormationImageUpload(file) {
         } catch (uploadError) {
             console.warn('⚠️ Échec upload Supabase pour formation:', uploadError.message);
             
-            // Fallback : utiliser l'image base64 temporaire
             const reader = new FileReader();
             reader.onload = (e) => {
                 updateFormationImagePreview(e.target.result, false);
@@ -1251,7 +1141,6 @@ function updateFormationImagePreview(imageSrc, isTemporary = false) {
         preview.style.display = 'block';
         uploadArea.style.display = 'none';
         
-        // Ajouter un indicateur visuel si c'est temporaire
         if (isTemporary) {
             previewImg.style.opacity = '0.7';
             previewImg.style.border = '2px dashed #FF7900';
@@ -1259,7 +1148,6 @@ function updateFormationImagePreview(imageSrc, isTemporary = false) {
             previewImg.style.opacity = '1';
             previewImg.style.border = '2px solid var(--border-color)';
             
-            // Seulement mettre à jour le champ caché avec l'URL définitive
             if (imageField) {
                 imageField.value = imageSrc;
             }
@@ -1330,7 +1218,6 @@ function createEventImageUploader(containerId, currentImage = '') {
     
     container.innerHTML = uploaderHTML;
     
-    // Événements pour l'upload
     const uploadArea = document.getElementById('eventUploadArea');
     const imageInput = document.getElementById('eventImageInput');
     const imageField = document.getElementById('eventImage');
@@ -1344,7 +1231,6 @@ function createEventImageUploader(containerId, currentImage = '') {
         }
     });
     
-    // Drag & Drop
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -1364,7 +1250,6 @@ function createEventImageUploader(containerId, currentImage = '') {
         }
     });
     
-    // Mettre à jour le champ caché si une image est déjà sélectionnée
     if (currentImage && imageField) {
         imageField.value = currentImage;
     }
@@ -1372,7 +1257,6 @@ function createEventImageUploader(containerId, currentImage = '') {
 
 async function handleEventImageUpload(file) {
     try {
-        // Validation du fichier
         if (!file.type.startsWith('image/')) {
             showNotification('Veuillez sélectionner un fichier image valide', 'error');
             return;
@@ -1386,19 +1270,16 @@ async function handleEventImageUpload(file) {
         console.log('📸 Upload d\'image événement vers Supabase:', file.name);
         showNotification('Upload de l\'image d\'événement...', 'info');
         
-        // Afficher un aperçu immédiat pendant l'upload
         const reader = new FileReader();
         reader.onload = (e) => {
             updateEventImagePreview(e.target.result, true); // true = preview temporaire
         };
         reader.readAsDataURL(file);
         
-        // Essayer l'upload vers Supabase Storage
         try {
             const imageUrl = await window.SupabaseAPI.uploadImage(file, 'events');
             
             if (imageUrl) {
-                // Mettre à jour avec l'URL définitive de Supabase
                 updateEventImagePreview(imageUrl, false); // false = URL définitive
                 showNotification('Image d\'événement uploadée avec succès !', 'success');
                 return;
@@ -1406,7 +1287,6 @@ async function handleEventImageUpload(file) {
         } catch (uploadError) {
             console.warn('⚠️ Échec upload Supabase pour événement:', uploadError.message);
             
-            // Fallback : utiliser l'image base64 temporaire
             const reader = new FileReader();
             reader.onload = (e) => {
                 updateEventImagePreview(e.target.result, false);
@@ -1433,7 +1313,6 @@ function updateEventImagePreview(imageSrc, isTemporary = false) {
         preview.style.display = 'block';
         uploadArea.style.display = 'none';
         
-        // Ajouter un indicateur visuel si c'est temporaire
         if (isTemporary) {
             previewImg.style.opacity = '0.7';
             previewImg.style.border = '2px dashed #FF7900';
@@ -1441,7 +1320,6 @@ function updateEventImagePreview(imageSrc, isTemporary = false) {
             previewImg.style.opacity = '1';
             previewImg.style.border = '2px solid var(--border-color)';
             
-            // Seulement mettre à jour le champ caché avec l'URL définitive
             if (imageField) {
                 imageField.value = imageSrc;
             }
@@ -1478,9 +1356,6 @@ function removeEventImage() {
     showNotification('Image d\'événement supprimée', 'info');
 }
 
-// ========================================
-// MODAL ET ÉVÉNEMENTS
-// ========================================
 
 function closeModal() {
     const modal = document.getElementById('modal');
@@ -1494,11 +1369,9 @@ function showEventModal(event = null) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     
-    // Configuration du titre
     modalTitle.textContent = event ? 'Modifier l\'événement' : 'Ajouter un événement';
     currentEditId = event ? event.id : null;
     
-    // Génération du formulaire
     modalBody.innerHTML = `
         <form id="eventForm">
             <div class="form-row">
@@ -1614,15 +1487,12 @@ function showEventModal(event = null) {
         </form>
     `;
     
-    // Configuration des gestionnaires d'événements
     setupEventFormHandlers();
     
-    // Configuration de l'upload d'images pour événements
     setTimeout(() => {
         createEventImageUploader('eventImageUploader', event?.image || '');
     }, 100);
     
-    // Affichage du modal
     modal.classList.add('show');
     
     console.log('✅ Modal d\'événement affiché', event ? 'mode édition' : 'mode création');
@@ -1650,12 +1520,8 @@ async function deleteFormation(id) {
     }
 }
 
-// ========================================
-// FONCTIONNALITÉS DE FILTRAGE ET RECHERCHE
-// ========================================
 
 function setupFilterHandlers() {
-    // Gestionnaire de recherche
     const searchInput = document.getElementById('searchFormations');
     if (searchInput) {
         searchInput.addEventListener('input', handleSearchChange);
@@ -1664,7 +1530,6 @@ function setupFilterHandlers() {
         console.warn('❌ Champ de recherche non trouvé');
     }
 
-    // Gestionnaire de filtrage par catégorie
     const categorySelect = document.getElementById('categoryFilter');
     if (categorySelect) {
         categorySelect.addEventListener('change', handleCategoryChange);
@@ -1673,7 +1538,6 @@ function setupFilterHandlers() {
         console.warn('❌ Sélecteur de catégorie non trouvé');
     }
 
-    // Gestionnaire de filtrage par ville (statut)
     const cityFilter = document.getElementById('cityFilter');
     if (cityFilter) {
         cityFilter.addEventListener('change', handleCityChange);
@@ -1705,17 +1569,14 @@ function applyFilters() {
     console.log('🔧 Application des filtres:', currentFilters);
     
     filteredFormations = formations.filter(formation => {
-        // Filtre de recherche
         const matchesSearch = !currentFilters.search || 
             formation.title.toLowerCase().includes(currentFilters.search) ||
             formation.description.toLowerCase().includes(currentFilters.search) ||
             getCityName(formation.city).toLowerCase().includes(currentFilters.search);
 
-        // Filtre de catégorie
         const matchesCategory = !currentFilters.category || 
             formation.category === currentFilters.category;
 
-        // Filtre de ville
         const matchesCity = !currentFilters.city || 
             formation.city === currentFilters.city;
 
@@ -1734,7 +1595,6 @@ function resetFilters() {
         city: ''
     };
     
-    // Réinitialiser les champs de l'interface
     const searchInput = document.getElementById('searchFormations');
     if (searchInput) searchInput.value = '';
     
@@ -1752,10 +1612,8 @@ function updateResultsCounter() {
     const total = formations.length;
     const displayed = isFiltered ? filteredFormations.length : total;
     
-    // Chercher ou créer un élément pour afficher le compteur
     let counter = document.getElementById('resultsCounter');
     if (!counter) {
-        // Créer le compteur s'il n'existe pas
         const pageControls = document.querySelector('.page-controls');
         if (pageControls) {
             counter = document.createElement('div');
@@ -1780,7 +1638,6 @@ async function loadEventsTable() {
     try {
         console.log('🔄 Chargement de la table des événements...');
         
-        // Vérification API Supabase
         if (!window.SupabaseAPI) {
             throw new Error('API Supabase non disponible');
         }
@@ -1789,26 +1646,21 @@ async function loadEventsTable() {
             throw new Error('Fonction getEvents non disponible');
         }
         
-        // Charger les événements depuis Supabase
         events = await window.SupabaseAPI.getEvents();
         console.log(`📅 ${events.length} événements chargés depuis Supabase`);
         
-        // Debug des données
         if (events.length > 0) {
             console.log('🔍 Premier événement:', events[0]);
         }
         
-        // Affichage dans le tableau
         renderEventsTable();
         
-        // Mise à jour des statistiques
         updateDashboardStats();
         
     } catch (error) {
         console.error('❌ Erreur lors du chargement des événements:', error);
         showNotification('Erreur lors du chargement des événements: ' + error.message, 'error');
         
-        // Affichage d'un tableau vide en cas d'erreur
         const tbody = document.getElementById('eventsTableBody');
         if (tbody) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
@@ -1840,14 +1692,12 @@ function renderEventsTable() {
         const today = new Date();
         const isUpcoming = eventDate >= today;
         
-        // Formatage de la date
         const formattedDate = eventDate.toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
         });
         
-        // Statut avec couleur
         let statusClass = '';
         let statusIcon = '';
         switch(event.status) {
@@ -1929,24 +1779,18 @@ function getCityLabel(city) {
     return cityLabels[city] || city;
 }
 
-// ========================================
-// FONCTIONS POUR LES ÉVÉNEMENTS
-// ========================================
 
 function setupEventFormHandlers() {
-    // Gestionnaire de soumission du formulaire
     const eventForm = document.getElementById('eventForm');
     if (eventForm) {
         eventForm.addEventListener('submit', handleEventSubmit);
     }
     
-    // Gestionnaire d'annulation
     const cancelBtn = document.getElementById('cancelEvent');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', closeModal);
     }
     
-    // Gestionnaire de fermeture du modal
     const modalClose = document.getElementById('modalClose');
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
@@ -1960,13 +1804,11 @@ async function handleEventSubmit(event) {
     const eventData = Object.fromEntries(formData.entries());
     
     try {
-        // Validation basique
         if (!eventData.title || !eventData.description || !eventData.date_start || !eventData.time_start || !eventData.time_end || !eventData.location || !eventData.city) {
             showNotification('Veuillez remplir tous les champs obligatoires', 'error');
             return;
         }
         
-        // Gestion de l'image
         const imageInput = document.getElementById('eventImageInput');
         if (imageInput && imageInput.files.length > 0) {
             console.log('📸 Upload de l\'image en cours...');
@@ -1978,16 +1820,13 @@ async function handleEventSubmit(event) {
                 console.log('✅ Image uploadée:', imageUrl);
             } catch (imageError) {
                 console.warn('⚠️ Erreur upload image:', imageError);
-                // Continuer sans image si l'upload échoue
                 eventData.image = null;
             }
         } else if (currentEditId) {
-            // En mode édition, garder l'image existante si pas de nouvelle image
             const existingEvent = events.find(e => e.id === currentEditId);
             eventData.image = existingEvent ? existingEvent.image : null;
         }
         
-        // Préparation des données pour Supabase
         const eventPayload = {
             title: eventData.title,
             description: eventData.description,
@@ -2006,17 +1845,14 @@ async function handleEventSubmit(event) {
         console.log('💾 Sauvegarde de l\'événement:', eventPayload);
         
         if (currentEditId) {
-            // Mode édition
             eventPayload.id = currentEditId;
             await window.SupabaseAPI.updateEvent(currentEditId, eventPayload);
             showNotification('Événement mis à jour avec succès !', 'success');
         } else {
-            // Mode création
             await window.SupabaseAPI.saveEvent(eventPayload);
             showNotification('Événement créé avec succès !', 'success');
         }
         
-        // Fermeture du modal et rechargement des données
         closeModal();
         await loadEventsTable();
         
@@ -2052,11 +1888,7 @@ function loadSettingsForm() {
     console.log('Formulaire des paramètres - en cours de développement');
 }
 
-// ========================================
-// EXPORT DES FONCTIONS POUR LE DEBUG
-// ========================================
 
-// Exposer les fonctions principales pour les tests et diagnostics
 window.AdminFunctions = {
     showEventModal,
     loadEventsTable,

@@ -1,5 +1,3 @@
-// Script de diagnostic complet pour ODC Events
-// ========================================
 
 async function runDiagnostics() {
     const results = [];
@@ -13,7 +11,6 @@ async function runDiagnostics() {
     try {
         log('🚀 Démarrage du diagnostic complet...', 'start');
         
-        // 1. Vérification des dépendances
         log('1️⃣ Vérification des dépendances...');
         
         if (typeof window.supabase === 'undefined') {
@@ -26,7 +23,6 @@ async function runDiagnostics() {
         }
         log('✅ SupabaseAPI disponible');
         
-        // 2. Test de connexion
         log('2️⃣ Test de connexion à Supabase...');
         const connectionOk = await window.SupabaseAPI.testConnection();
         if (!connectionOk) {
@@ -34,12 +30,10 @@ async function runDiagnostics() {
         }
         log('✅ Connexion Supabase réussie');
         
-        // 3. Test des formations (qui marche)
         log('3️⃣ Test du chargement des formations...');
         const formations = await window.SupabaseAPI.getFormations();
         log(`✅ ${formations.length} formations chargées`);
         
-        // 4. Test des événements
         log('4️⃣ Test du chargement des événements...');
         const events = await window.SupabaseAPI.getEvents();
         log(`📅 ${events.length} événements chargés`);
@@ -53,7 +47,6 @@ async function runDiagnostics() {
             });
         }
         
-        // 5. Test de l'interface admin
         log('5️⃣ Vérification de l\'interface admin...');
         
         const addButton = document.getElementById('addNewBtn');
@@ -77,7 +70,6 @@ async function runDiagnostics() {
             log('✅ Page événements trouvée');
         }
         
-        // 6. Test des fonctions événements
         log('6️⃣ Test des fonctions d\'événements...');
         
         if (typeof window.showEventModal === 'function') {
@@ -99,7 +91,6 @@ async function runDiagnostics() {
         console.error('Erreur détaillée:', error);
     }
     
-    // Afficher les résultats
     displayResults(results);
 }
 
@@ -165,13 +156,10 @@ function displayResults(results) {
     document.body.appendChild(container);
 }
 
-// Exposer la fonction de diagnostic pour utilisation manuelle
 window.runODCDiagnostics = runDiagnostics;
 
-// Ne plus exécuter automatiquement - le diagnostic sera déclenché manuellement
 console.log('🔧 Diagnostic ODC disponible - utilisez runODCDiagnostics() pour l\'exécuter');
 
-// Optionnel : Exécuter seulement si un paramètre URL spécifique est présent
 if (window.location.search.includes('diagnostic=true')) {
     console.log('🚀 Paramètre diagnostic détecté, exécution automatique...');
     setTimeout(runDiagnostics, 2000);

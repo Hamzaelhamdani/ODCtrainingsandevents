@@ -8,15 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Supabase JS -->
+    
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- Variables d'environnement (doit être chargé avant supabase.js) -->
+    
     <script src="../env.js"></script>
     <script src="../config/supabase.js"></script>
     <script src="js/auth.js"></script>
 </head>
 <body style="display: none;">
-    <!-- Protection d'authentification -->
+    
     <div id="authLoader" style="text-align: center; padding: 3rem; font-family: 'Open Sans', sans-serif;">
         <i class="fas fa-shield-alt" style="font-size: 3rem; color: #FF7900; margin-bottom: 1rem;"></i>
         <h2 style="color: #333;">Vérification des permissions...</h2>
@@ -82,7 +82,7 @@
             }
         }, 5000);
     </script>
-    <!-- Sidebar Navigation -->
+    
     <div class="admin-layout">
         <nav class="sidebar">
             <div class="sidebar-header">
@@ -136,9 +136,9 @@
             </ul>
         </nav>
 
-        <!-- Main Content Area -->
+        
         <main class="main-content">
-            <!-- Top Header -->
+            
             <header class="content-header">
                 <div class="header-left">
                     <button class="sidebar-toggle" id="sidebarToggle">
@@ -165,9 +165,9 @@
                 </div>
             </header>
 
-            <!-- Content Pages -->
+            
             <div class="content-wrapper">
-                <!-- Dashboard Page -->
+                
                 <div id="dashboard-page" class="content-page active">
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -215,20 +215,20 @@
                         <div class="dashboard-section">
                             <h3>Activités récentes</h3>
                             <div class="recent-activities" id="recentActivities">
-                                <!-- Activities will be loaded here -->
+                                
                             </div>
                         </div>
                         
                         <div class="dashboard-section">
                             <h3>Prochains événements</h3>
                             <div class="upcoming-events" id="upcomingEvents">
-                                <!-- Upcoming events will be loaded here -->
+                                
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Formations Page -->
+                
                 <div id="formations-page" class="content-page">
                     <div class="page-controls">
                         <div class="search-bar">
@@ -266,13 +266,13 @@
                                 </tr>
                             </thead>
                             <tbody id="formationsTableBody">
-                                <!-- Formations data will be loaded here -->
+                                
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Events Page -->
+                
                 <div id="events-page" class="content-page">
                     <div class="page-controls">
                         <div class="search-bar">
@@ -304,13 +304,13 @@
                                 </tr>
                             </thead>
                             <tbody id="eventsTableBody">
-                                <!-- Events data will be loaded here -->
+                                
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Settings Page -->
+                
                 <div id="settings-page" class="content-page">
                     <div class="settings-grid">
                         <div class="settings-section">
@@ -348,7 +348,7 @@
                         <div class="settings-section">
                             <h3>Centres ODC</h3>
                             <div id="odcCentersList">
-                                <!-- ODC Centers will be loaded here -->
+                                
                             </div>
                         </div>
                     </div>
@@ -357,7 +357,7 @@
         </main>
     </div>
 
-    <!-- Modal for Add/Edit -->
+    
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -367,16 +367,16 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- Form content will be loaded here -->
+                
             </div>
         </div>
     </div>
 
-    <!-- Charger les scripts dans le bon ordre -->
+    
     <script src="js/admin-supabase.js"></script>
     <script src="js/diagnostic.js"></script>
     
-    <!-- Initialiser après que l'authentification soit OK -->
+    
     <script>
         // Attendre que l'authentification soit validée et que SupabaseAPI soit disponible
         window.addEventListener('load', async function() {

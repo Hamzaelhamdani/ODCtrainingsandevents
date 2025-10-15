@@ -1,11 +1,6 @@
-// ========================================
-// FONCTIONS POUR CORRIGER LE CALENDRIER
-// ========================================
 
-// Variable pour stocker les données du calendrier depuis Supabase
 let calendarEventsData = {};
 
-// Fonction pour générer les données du calendrier depuis Supabase
 function generateCalendarData() {
     calendarEventsData = {};
     
@@ -13,7 +8,6 @@ function generateCalendarData() {
     console.log('Formations disponibles:', formations);
     console.log('Événements disponibles:', events);
     
-    // Fonction pour obtenir toutes les dates entre deux dates
     function getDatesBetween(startDate, endDate) {
         const dates = [];
         const currentDate = new Date(startDate);
@@ -27,12 +21,10 @@ function generateCalendarData() {
         return dates;
     }
     
-    // Traiter les formations depuis Supabase (sur tous les jours de la formation)
     formations.forEach(formation => {
         const startDate = formation.date_start;
         const endDate = formation.date_end || formation.date_start;
         
-        // Obtenir toutes les dates de la formation
         const formationDates = getDatesBetween(startDate, endDate);
         
         formationDates.forEach((dateKey, index) => {
@@ -40,7 +32,6 @@ function generateCalendarData() {
                 calendarEventsData[dateKey] = [];
             }
             
-            // Ajouter un indicateur du jour (Jour 1/3, Jour 2/3, etc.)
             const dayIndicator = formationDates.length > 1 ? ` (Jour ${index + 1}/${formationDates.length})` : '';
             
             calendarEventsData[dateKey].push({
@@ -60,7 +51,6 @@ function generateCalendarData() {
         });
     });
     
-    // Traiter les événements depuis Supabase
     events.forEach(event => {
         const dateKey = event.date_start;
         if (!calendarEventsData[dateKey]) {
@@ -82,21 +72,16 @@ function generateCalendarData() {
     
     console.log('📅 Données du calendrier générées:', calendarEventsData);
     
-    // Initialiser la navigation du calendrier
     initializeCalendarNavigation();
     
-    // Mettre à jour les cartes de dates avec les vraies données
     updateDateCards();
     
-    // Mettre à jour l'affichage des événements pour aujourd'hui
     const today = new Date().toISOString().split('T')[0];
     updateEventsDisplay(today);
 }
 
-// Variable pour gérer la navigation du calendrier
 let currentCalendarStart = new Date();
 
-// Fonction pour obtenir le début de la semaine (lundi)
 function getWeekStart(date) {
     const d = new Date(date);
     const day = d.getDay();
@@ -104,19 +89,15 @@ function getWeekStart(date) {
     return new Date(d.setDate(diff));
 }
 
-// Fonction pour naviguer dans le calendrier
 function navigateCalendar(direction) {
-    // direction: -1 pour précédent, +1 pour suivant
     currentCalendarStart.setDate(currentCalendarStart.getDate() + (direction * 7));
     updateDateCardsFromStart(currentCalendarStart);
 }
 
-// Fonction pour mettre à jour les cartes à partir d'une date de départ
 function updateDateCardsFromStart(startDate) {
     const datesCarousel = document.getElementById('datesCarousel');
     if (!datesCarousel) return;
     
-    // S'assurer qu'on commence au début de la semaine
     const weekStart = getWeekStart(startDate);
     currentCalendarStart = new Date(weekStart);
     
@@ -125,7 +106,6 @@ function updateDateCardsFromStart(startDate) {
     
     console.log('📅 Navigation calendrier - Semaine du:', weekStart.toLocaleDateString('fr-FR'));
     
-    // Générer 7 jours à partir du début de la semaine
     for (let i = 0; i < 7; i++) {
         const date = new Date(weekStart);
         date.setDate(weekStart.getDate() + i);
@@ -136,18 +116,15 @@ function updateDateCardsFromStart(startDate) {
         const monthName = date.toLocaleDateString('fr-FR', { month: 'short' });
         const year = date.getFullYear();
         
-        // Compter les événements pour cette date
         const eventsCount = calendarEventsData[dateKey] ? calendarEventsData[dateKey].length : 0;
         const eventsText = eventsCount === 0 ? 'Aucun événement' : 
                           eventsCount === 1 ? '1 événement' : 
                           `${eventsCount} événements`;
         
-        // Vérifier si c'est aujourd'hui
         const isToday = date.toDateString() === now.toDateString();
         const activeClass = (i === 0 && isToday) ? 'today active' : isToday ? 'today' : '';
         const dayText = isToday ? 'Aujourd\'hui' : dayName;
         
-        // Ajouter l'année si on change d'année
         const monthDisplay = date.getFullYear() !== now.getFullYear() ? 
             `${monthName} ${year}` : monthName;
         
@@ -163,34 +140,27 @@ function updateDateCardsFromStart(startDate) {
     
     datesCarousel.innerHTML = datesHTML;
     
-    // Réattacher les événements de clic
     attachDateCardEvents();
 }
 
-// Fonction pour mettre à jour les cartes de dates avec les bonnes données
 function updateDateCards() {
     const today = new Date();
     currentCalendarStart = getWeekStart(today); // Commencer au début de la semaine courante
     updateDateCardsFromStart(currentCalendarStart);
 }
 
-// Fonction pour attacher les événements aux cartes de dates
 function attachDateCardEvents() {
     const dateCards = document.querySelectorAll('.date-card');
     dateCards.forEach(card => {
         card.addEventListener('click', function() {
-            // Retirer la classe active de toutes les cartes
             dateCards.forEach(c => c.classList.remove('active'));
-            // Ajouter la classe active à la carte cliquée
             this.classList.add('active');
-            // Mettre à jour l'affichage des événements
             const selectedDate = this.getAttribute('data-date');
             updateEventsDisplay(selectedDate);
         });
     });
 }
 
-// Initialiser la navigation du calendrier
 function initializeCalendarNavigation() {
     const prevBtn = document.getElementById('prevDates');
     const nextBtn = document.getElementById('nextDates');
@@ -206,7 +176,6 @@ function initializeCalendarNavigation() {
     console.log('🎮 Navigation calendrier initialisée');
 }
 
-// Fonction pour mettre à jour l'affichage des événements du calendrier
 function updateEventsDisplay(selectedDate) {
     const selectedDateTitle = document.getElementById('selectedDateTitle');
     const eventsList = document.getElementById('eventsList');
@@ -214,7 +183,6 @@ function updateEventsDisplay(selectedDate) {
     
     if (!selectedDateTitle || !eventsList) return;
     
-    // Mettre à jour le titre
     const dateObj = new Date(selectedDate);
     const formattedDate = dateObj.toLocaleDateString('fr-FR', {
         weekday: 'long',
@@ -224,19 +192,15 @@ function updateEventsDisplay(selectedDate) {
     });
     selectedDateTitle.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     
-    // Récupérer les événements de la date sélectionnée depuis Supabase
     const dayEvents = calendarEventsData[selectedDate] || [];
     
-    // Afficher les événements du jour
     displayCalendarEvents(dayEvents, eventsList);
     
-    // Afficher les prochains événements
     if (upcomingList) {
         displayUpcomingEvents(selectedDate, upcomingList);
     }
 }
 
-// Fonction pour afficher les événements dans le calendrier
 function displayCalendarEvents(events, container) {
     if (!container) return;
     
@@ -260,7 +224,6 @@ function displayCalendarEvents(events, container) {
             (event.category === 'ecole-du-code' ? '#007bff' : '#28a745') : 
             '#6f42c1';
             
-        // Classes CSS pour les événements multi-jours
         const multiDayClass = event.isMultiDay ? 'calendar-event-multi-day' : '';
         const dayIndicator = event.isMultiDay ? 
             `<div class="calendar-event-day-indicator">Jour ${event.dayNumber}/${event.totalDays}</div>` : '';
@@ -294,28 +257,22 @@ function displayCalendarEvents(events, container) {
     container.innerHTML = eventsHTML;
 }
 
-// Fonction pour afficher les prochains événements
 function displayUpcomingEvents(currentDate, container) {
     if (!container) return;
     
     console.log('🔍 Recherche des prochains événements après:', currentDate);
     
-    // Obtenir toutes les dates futures avec des événements
     const currentDateTime = new Date(currentDate);
     const futureEvents = [];
     const seenEvents = new Map(); // Utiliser Map pour stocker les premiers événements
     
-    // Parcourir toutes les dates du calendrier
     Object.keys(calendarEventsData).forEach(dateKey => {
         const eventDate = new Date(dateKey);
-        // Prendre seulement les événements futurs (après la date sélectionnée)
         if (eventDate > currentDateTime) {
             calendarEventsData[dateKey].forEach(event => {
-                // Nettoyer le titre pour créer une clé unique (enlever les mentions de jour)
                 const cleanTitle = event.title.replace(/\s*\(Jour\s+\d+\/\d+\)\s*/g, '').trim();
                 const eventKey = `${cleanTitle}-${event.city}-${event.type}`;
                 
-                // Si on n'a pas encore vu cet événement, ou si c'est une date plus tôt
                 if (!seenEvents.has(eventKey) || eventDate < seenEvents.get(eventKey).dateObj) {
                     seenEvents.set(eventKey, {
                         ...event,
@@ -328,11 +285,9 @@ function displayUpcomingEvents(currentDate, container) {
         }
     });
     
-    // Convertir Map en Array et trier par date
     const uniqueEvents = Array.from(seenEvents.values());
     uniqueEvents.sort((a, b) => a.dateObj - b.dateObj);
     
-    // Prendre seulement les 5 prochains événements uniques
     const nextEvents = uniqueEvents.slice(0, 5);
     
     console.log('📅 Prochains événements trouvés:', nextEvents.length);
@@ -382,7 +337,6 @@ function displayUpcomingEvents(currentDate, container) {
     container.innerHTML = upcomingHTML;
 }
 
-// Fonction pour obtenir le nom d'affichage de la ville
 function getCityDisplayName(city) {
     const cityNames = {
         'rabat': 'ODC Rabat',
@@ -393,29 +347,23 @@ function getCityDisplayName(city) {
     return cityNames[city] || city;
 }
 
-// Fonction pour filtrer le calendrier par ville
 function updateCalendarForCity(selectedCity) {
     console.log('📅 Mise à jour du calendrier pour la ville:', selectedCity);
     
-    // Régénérer les données du calendrier avec le filtre
     const originalFormations = [...formations];
     const originalEvents = [...events];
     
     if (selectedCity !== 'all') {
-        // Filtrer temporairement les données pour le calendrier
         formations = originalFormations.filter(f => f.city === selectedCity);
         events = originalEvents.filter(e => e.city === selectedCity);
     }
     
-    // Régénérer le calendrier
     generateCalendarData();
     
-    // Restaurer les données originales
     formations = originalFormations;
     events = originalEvents;
 }
 
-// Appel de la fonction une fois que les données Supabase sont chargées
 if (typeof window !== 'undefined') {
     window.generateCalendarData = generateCalendarData;
     window.updateEventsDisplay = updateEventsDisplay;
