@@ -9,6 +9,16 @@ node_modules/
 env-local.js
 config-local.js
 
+# Documentation technique et fichiers de sécurité (ne pas publier)
+*SECURITY*.md
+*SECURITE*.md
+*GUIDE*.md
+*SETUP*.md
+test-*.html
+*.sql
+database-*.sql
+admin-setup.sql
+
 # Fichiers système
 .DS_Store
 Thumbs.db
@@ -37,6 +47,3 @@ yarn-error.log*
 .cache/
 dist/
 build/
-
-# Fichiers de test
-test-security.html
