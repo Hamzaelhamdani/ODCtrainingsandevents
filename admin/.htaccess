@@ -1,0 +1,38 @@
+# Protection du dossier admin
+# Ce fichier protège l'accès au back office au niveau serveur
+
+# Bloquer l'accès direct aux fichiers sensibles
+<Files "*.js">
+    # Autoriser seulement les requêtes AJAX locales
+    Order Deny,Allow
+    Deny from all
+    Allow from 127.0.0.1
+    Allow from ::1
+</Files>
+
+# Redirection forcée vers login pour les accès non autorisés
+RewriteEngine On
+
+# Si l'utilisateur accède à index.html sans être passé par login
+RewriteCond %{HTTP_REFERER} !login\.html
+RewriteCond %{REQUEST_URI} index\.html
+RewriteRule ^index\.html$ login.html [R=302,L]
+
+# Protection contre les accès directs
+<Files "index.html">
+    # Ajouter des headers de sécurité
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+</Files>
+
+# Bloquer l'accès aux fichiers de configuration
+<Files "*.sql">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+<Files "*.md">
+    Order Deny,Allow
+    Deny from all
+</Files>

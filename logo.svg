@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" class="odc-logo">
+  <!-- Orange square background -->
+  <rect x="0" y="5" width="50" height="50" fill="#FF7900" rx="2"/>
+  
+  <!-- Orange text in white -->
+  <text x="25" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">orange</text>
+  
+  <!-- Orange Digital Center text -->
+  <g fill="white" font-family="Arial, sans-serif">
+    <!-- Orange -->
+    <text x="65" y="22" font-size="18" font-weight="bold">Orange</text>
+    <!-- Digital Center -->
+    <text x="65" y="38" font-size="18" font-weight="bold">Digital Center</text>
+  </g>
+</svg>

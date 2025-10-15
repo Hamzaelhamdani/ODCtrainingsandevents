@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orange Digital Center - Formations & Événements du Mois</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Supabase JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo-container">
+                    <div class="logo-orange-square">
+                        <span class="logo-orange-text">orange</span>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">Orange</span>
+                        <span class="logo-sub">Digital Center</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="#calendrier" class="nav-link">Calendrier</a>
+                <a href="#formations" class="nav-link">Formations</a>
+                <a href="#events" class="nav-link">Événements</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Développez vos compétences digitales</h2>
+                <p class="hero-subtitle">Découvrez nos formations et événements dans tous nos centres Orange Digital Center</p>
+                <a href="#filters" class="hero-cta">Découvrir nos formations</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section id="filters" class="filters-section">
+        <div class="container">
+            <h3 class="section-title">Filtrer par ODC</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-city="all">Tous les ODC</button>
+                <button class="filter-btn" data-city="rabat">ODC Rabat</button>
+                <button class="filter-btn" data-city="agadir">ODC Agadir</button>
+                <button class="filter-btn" data-city="sidimaarouf">ODC Club Sidi Maarouf</button>
+                <button class="filter-btn" data-city="benmisk">ODC Club Ben M'sik</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendar Section Moderne -->
+    <section class="calendar-section" id="calendrier">
+        <div class="container">
+            <h3 class="section-title">Formations & Événements</h3>
+            <p class="section-subtitle">Naviguez par date pour découvrir les événements à venir</p>
+            
+            <!-- Navigation par dates en carousel -->
+            <div class="dates-carousel-container">
+                <button class="carousel-nav prev-dates" id="prevDates">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div class="dates-carousel" id="datesCarousel">
+                    <!-- Les dates seront générées dynamiquement par JavaScript -->
+                    <div class="loading-dates">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement du calendrier...</p>
+                    </div>
+                </div>
+                
+                <button class="carousel-nav next-dates" id="nextDates">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <!-- Événements du jour sélectionné -->
+            <div class="events-display" id="eventsDisplay">
+                <div class="events-header">
+                    <h4 id="selectedDateTitle">Aujourd'hui - 13 Octobre 2025</h4>
+                    <div class="events-filter">
+                        <button class="filter-pill active" data-type="all">Tout</button>
+                        <button class="filter-pill" data-type="formation">Formations</button>
+                        <button class="filter-pill" data-type="startup">Startups</button>
+                        <button class="filter-pill" data-type="event">Événements</button>
+                    </div>
+                </div>
+                
+                <div class="events-list" id="eventsList">
+                    <!-- Les événements seront injectés ici via JavaScript -->
+                </div>
+                
+                <!-- Section des prochains événements -->
+                <div class="upcoming-events">
+                    <h5><i class="fas fa-arrow-right"></i> Prochains événements</h5>
+                    <div class="upcoming-list" id="upcomingList">
+                        <!-- Les prochains événements seront injectés ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- École du Code Section -->
+    <section id="formations" class="formations-section">
+        <div class="container">
+            <h3 class="section-title">École du Code</h3>
+            <div class="formations-grid" id="formations-container">
+                <!-- Contenu chargé dynamiquement depuis script.js (Supabase ou données fallback) -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FabLab Section -->
+    <section id="fablab" class="fablab-section">
+        <div class="container">
+            <h3 class="section-title">FabLab</h3>
+            <div class="formations-grid" id="fablab-container">
+                <!-- Les formations FabLab seront chargées dynamiquement depuis Supabase -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Orange Fab Events Section -->
+    <section id="events" class="orangefab-section">
+        <div class="container">
+            <h3 class="section-title">Événements Orange Fab</h3>
+            <div class="events-grid" id="events-container">
+                <!-- Les événements seront chargés dynamiquement depuis le back-office -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo-container">
+                        <div class="logo-orange-square">
+                            <span class="logo-orange-text">orange</span>
+                        </div>
+                        <div class="logo-text">
+                            <span class="logo-main">Orange</span>
+                            <span class="logo-sub">Digital Center</span>
+                        </div>
+                    </div>
+                    <p class="footer-description">
+                        L'Orange Digital Center accompagne les talents du numérique vers l'excellence.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Nos ODC</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">ODC Rabat</a></li>
+                        <li><a href="#">ODC Agadir</a></li>
+                        <li><a href="#">ODC Club Ben M'sik</a></li>
+                        <li><a href="#">ODC Club Sidi Maarouf</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Contact</h4>
+                    <p><i class="fas fa-envelope"></i> contact@orangedigitalcenter.ma</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Orange Digital Center. Tous droits réservés.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Mentions légales</a>
+                    <a href="#">Politique de confidentialité</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script-dynamic.js"></script>
+    <script src="script-calendar-fix.js"></script>
+</body>
+</html>
