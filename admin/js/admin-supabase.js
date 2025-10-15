@@ -809,45 +809,48 @@ function showFormationModal(formation = null) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     
-    modalTitle.textContent = formation ? 'Modifier la formation' : 'Nouvelle formation';
     modalTitle.innerHTML = `
         <i class="fas fa-graduation-cap"></i>
         ${formation ? 'Modifier la formation' : 'Nouvelle formation'}
     `;
     
     const formHTML = `
-        <form id="formationForm" class="formation-form">
+        <form id="formationForm" class="modern-form">
             <div class="form-section">
                 <h4><i class="fas fa-info-circle"></i> Informations générales</h4>
                 
-                <div class="form-group">
-                    <label for="formationTitle" class="required">Titre de la formation</label>
+                <div class="form-group floating-label">
                     <input type="text" id="formationTitle" name="title" value="${formation?.title || ''}" required
-                           placeholder="Ex: Développement Web Full Stack">
+                           class="form-control" placeholder=" ">
+                    <label for="formationTitle">Titre de la formation <span class="required">*</span></label>
+                    <div class="form-icon"><i class="fas fa-graduation-cap"></i></div>
                 </div>
                 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="formationCategory" class="required">Catégorie</label>
-                        <select id="formationCategory" name="category" required>
+                    <div class="form-group floating-label">
+                        <select id="formationCategory" name="category" required class="form-control">
                             <option value="">Choisir une catégorie</option>
                             <option value="ecole-du-code" ${formation?.category === 'ecole-du-code' ? 'selected' : ''}>École du Code</option>
                             <option value="fablab" ${formation?.category === 'fablab' ? 'selected' : ''}>FabLab</option>
                         </select>
+                        <label for="formationCategory">Catégorie <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-layer-group"></i></div>
                     </div>
-                    <div class="form-group">
-                        <label for="formationStatus">Statut</label>
-                        <select id="formationStatus" name="status">
+                    <div class="form-group floating-label">
+                        <select id="formationStatus" name="status" class="form-control">
                             <option value="active" ${formation?.status === 'active' ? 'selected' : ''}>Active</option>
                             <option value="inactive" ${formation?.status === 'inactive' ? 'selected' : ''}>Inactive</option>
                         </select>
+                        <label for="formationStatus">Statut</label>
+                        <div class="form-icon"><i class="fas fa-toggle-on"></i></div>
                     </div>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group floating-label">
+                    <textarea id="formationDescription" name="description" rows="4" class="form-control" 
+                              placeholder=" ">${formation?.description || ''}</textarea>
                     <label for="formationDescription">Description</label>
-                    <textarea id="formationDescription" name="description" rows="4" 
-                              placeholder="Décrivez le contenu et les objectifs de la formation...">${formation?.description || ''}</textarea>
+                    <div class="form-icon"><i class="fas fa-align-left"></i></div>
                 </div>
             </div>
             
@@ -855,24 +858,32 @@ function showFormationModal(formation = null) {
                 <h4><i class="fas fa-calendar-alt"></i> Planning</h4>
                 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="formationDateStart" class="required">Date de début</label>
-                        <input type="date" id="formationDateStart" name="dateStart" value="${formation?.date_start || ''}" required>
+                    <div class="form-group floating-label">
+                        <input type="date" id="formationDateStart" name="dateStart" 
+                               value="${formation?.date_start || ''}" required class="form-control">
+                        <label for="formationDateStart">Date de début <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-calendar-plus"></i></div>
                     </div>
-                    <div class="form-group">
-                        <label for="formationDateEnd" class="required">Date de fin</label>
-                        <input type="date" id="formationDateEnd" name="dateEnd" value="${formation?.date_end || ''}" required>
+                    <div class="form-group floating-label">
+                        <input type="date" id="formationDateEnd" name="dateEnd" 
+                               value="${formation?.date_end || ''}" required class="form-control">
+                        <label for="formationDateEnd">Date de fin <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-calendar-minus"></i></div>
                     </div>
                 </div>
                 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="formationTimeStart" class="required">Heure de début</label>
-                        <input type="time" id="formationTimeStart" name="timeStart" value="${formation?.time_start || ''}" required>
+                    <div class="form-group floating-label">
+                        <input type="time" id="formationTimeStart" name="timeStart" 
+                               value="${formation?.time_start || ''}" required class="form-control">
+                        <label for="formationTimeStart">Heure de début <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-clock"></i></div>
                     </div>
-                    <div class="form-group">
-                        <label for="formationTimeEnd" class="required">Heure de fin</label>
-                        <input type="time" id="formationTimeEnd" name="timeEnd" value="${formation?.time_end || ''}" required>
+                    <div class="form-group floating-label">
+                        <input type="time" id="formationTimeEnd" name="timeEnd" 
+                               value="${formation?.time_end || ''}" required class="form-control">
+                        <label for="formationTimeEnd">Heure de fin <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-clock"></i></div>
                     </div>
                 </div>
             </div>
@@ -881,44 +892,62 @@ function showFormationModal(formation = null) {
                 <h4><i class="fas fa-map-marker-alt"></i> Localisation</h4>
                 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="formationCity" class="required">Ville</label>
-                        <select id="formationCity" name="city" required>
+                    <div class="form-group floating-label">
+                        <select id="formationCity" name="city" required class="form-control">
                             <option value="">Choisir une ville</option>
                             <option value="rabat" ${formation?.city === 'rabat' ? 'selected' : ''}>Rabat</option>
                             <option value="agadir" ${formation?.city === 'agadir' ? 'selected' : ''}>Agadir</option>
                             <option value="benmisk" ${formation?.city === 'benmisk' ? 'selected' : ''}>Ben M'sik</option>
                             <option value="sidimaarouf" ${formation?.city === 'sidimaarouf' ? 'selected' : ''}>Sidi Maarouf</option>
                         </select>
+                        <label for="formationCity">Ville <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-city"></i></div>
                     </div>
-                    <div class="form-group">
-                        <label for="formationMaxParticipants" class="required">Participants max</label>
+                    <div class="form-group floating-label">
                         <input type="number" id="formationMaxParticipants" name="maxParticipants" 
-                               value="${formation?.max_participants || ''}" min="1" max="100" required>
+                               value="${formation?.max_participants || ''}" min="1" max="100" required class="form-control" placeholder=" ">
+                        <label for="formationMaxParticipants">Participants max <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-users"></i></div>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="formationLocation">Lieu exact</label>
+                <div class="form-group floating-label">
                     <input type="text" id="formationLocation" name="location" value="${formation?.location || ''}"
-                           placeholder="Ex: ODC Rabat - Salle de formation A">
+                           class="form-control" placeholder=" ">
+                    <label for="formationLocation">Lieu exact</label>
+                    <div class="form-icon"><i class="fas fa-map-pin"></i></div>
                 </div>
             </div>
             
             <div class="form-section">
                 <h4><i class="fas fa-image"></i> Image de la formation</h4>
-                <div id="formationImageUploader" class="image-uploader-section"></div>
+                <div class="image-upload-zone">
+                    <div class="file-upload">
+                        <input type="file" id="formationImageFile" accept="image/*" onchange="handleFormationImageUpload(this)">
+                        <label for="formationImageFile">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Cliquez pour sélectionner ou glissez une image</span>
+                            <small>PNG, JPG, JPEG jusqu'à 5MB</small>
+                        </label>
+                    </div>
+                    <div class="image-preview" id="formationImagePreview" style="display: none;">
+                        <img id="formationPreviewImg" src="" alt="Aperçu">
+                        <button type="button" class="remove-image" onclick="removeFormationImage()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
                 <input type="hidden" id="formationImage" name="image" value="${formation?.image || ''}">
             </div>
             
             <div class="form-section">
                 <h4><i class="fas fa-link"></i> Inscription</h4>
                 
-                <div class="form-group">
-                    <label for="formationRegistrationLink">Lien d'inscription</label>
+                <div class="form-group floating-label">
                     <input type="url" id="formationRegistrationLink" name="registrationLink" 
-                           value="${formation?.registration_link || ''}"
-                           placeholder="https://forms.google.com/...">
+                           value="${formation?.registration_link || ''}" class="form-control" placeholder=" ">
+                    <label for="formationRegistrationLink">Lien d'inscription</label>
+                    <div class="form-icon"><i class="fas fa-external-link-alt"></i></div>
                     <small class="form-help">Lien vers le formulaire d'inscription Google Forms ou autre</small>
                 </div>
             </div>
@@ -927,7 +956,7 @@ function showFormationModal(formation = null) {
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">
                     <i class="fas fa-times"></i> Annuler
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary btn-form">
                     <i class="fas fa-save"></i>
                     ${formation ? 'Mettre à jour la formation' : 'Créer la formation'}
                 </button>
@@ -938,12 +967,19 @@ function showFormationModal(formation = null) {
     modalBody.innerHTML = formHTML;
     modal.classList.add('show');
     
-    setTimeout(() => {
-        createFormationImageUploader('formationImageUploader', formation?.image || '');
-    }, 100);
+    // Initialiser l'upload d'image si une image existe
+    if (formation?.image) {
+        const preview = document.getElementById('formationImagePreview');
+        const img = document.getElementById('formationPreviewImg');
+        img.src = formation.image;
+        preview.style.display = 'block';
+    }
     
     const form = document.getElementById('formationForm');
     form.addEventListener('submit', handleFormationSubmit);
+    
+    // Activer les labels flottants
+    initFloatingLabels();
     
     console.log('✅ Modal formation affiché', formation ? 'mode édition' : 'mode création');
 }
@@ -1369,119 +1405,171 @@ function showEventModal(event = null) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     
-    modalTitle.textContent = event ? 'Modifier l\'événement' : 'Ajouter un événement';
+    modalTitle.innerHTML = `
+        <i class="fas fa-calendar-alt"></i>
+        ${event ? 'Modifier l\'événement' : 'Nouvel événement'}
+    `;
     currentEditId = event ? event.id : null;
     
     modalBody.innerHTML = `
-        <form id="eventForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="eventTitle" class="required">Titre de l'événement</label>
-                    <input type="text" id="eventTitle" name="title" required 
-                           placeholder="Ex: Workshop IA & Machine Learning"
-                           value="${event ? event.title || '' : ''}">
+        <form id="eventForm" class="modern-form">
+            <div class="form-section">
+                <h4><i class="fas fa-info-circle"></i> Informations générales</h4>
+                
+                <div class="form-group floating-label">
+                    <input type="text" id="eventTitle" name="title" required class="form-control" 
+                           placeholder=" " value="${event ? event.title || '' : ''}">
+                    <label for="eventTitle">Titre de l'événement <span class="required">*</span></label>
+                    <div class="form-icon"><i class="fas fa-calendar-alt"></i></div>
                 </div>
-                <div class="form-group">
-                    <label for="eventCategory">Catégorie</label>
-                    <select id="eventCategory" name="category">
-                        <option value="workshop" ${event && event.category === 'workshop' ? 'selected' : ''}>Workshop</option>
-                        <option value="conference" ${event && event.category === 'conference' ? 'selected' : ''}>Conférence</option>
-                        <option value="formation" ${event && event.category === 'formation' ? 'selected' : ''}>Formation spéciale</option>
-                        <option value="networking" ${event && event.category === 'networking' ? 'selected' : ''}>Networking</option>
-                        <option value="hackathon" ${event && event.category === 'hackathon' ? 'selected' : ''}>Hackathon</option>
-                        <option value="autre" ${event && event.category === 'autre' ? 'selected' : ''}>Autre</option>
-                    </select>
+                
+                <div class="form-row">
+                    <div class="form-group floating-label">
+                        <select id="eventCategory" name="category" class="form-control">
+                            <option value="workshop" ${event && event.category === 'workshop' ? 'selected' : ''}>Workshop</option>
+                            <option value="conference" ${event && event.category === 'conference' ? 'selected' : ''}>Conférence</option>
+                            <option value="formation" ${event && event.category === 'formation' ? 'selected' : ''}>Formation spéciale</option>
+                            <option value="networking" ${event && event.category === 'networking' ? 'selected' : ''}>Networking</option>
+                            <option value="hackathon" ${event && event.category === 'hackathon' ? 'selected' : ''}>Hackathon</option>
+                            <option value="autre" ${event && event.category === 'autre' ? 'selected' : ''}>Autre</option>
+                        </select>
+                        <label for="eventCategory">Catégorie</label>
+                        <div class="form-icon"><i class="fas fa-tag"></i></div>
+                    </div>
+                    <div class="form-group floating-label">
+                        <select id="eventStatus" name="status" class="form-control">
+                            <option value="active" ${event && event.status === 'active' ? 'selected' : ''}>Actif</option>
+                            <option value="ouvert" ${event && event.status === 'ouvert' ? 'selected' : ''}>Ouvert aux inscriptions</option>
+                            <option value="complet" ${event && event.status === 'complet' ? 'selected' : ''}>Complet</option>
+                            <option value="annule" ${event && event.status === 'annule' ? 'selected' : ''}>Annulé</option>
+                            <option value="reporte" ${event && event.status === 'reporte' ? 'selected' : ''}>Reporté</option>
+                        </select>
+                        <label for="eventStatus">Statut</label>
+                        <div class="form-icon"><i class="fas fa-toggle-on"></i></div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="eventDescription" class="required">Description</label>
-                <textarea id="eventDescription" name="description" rows="4" required 
-                          placeholder="Décrivez l'événement, ses objectifs et ce que les participants vont apprendre...">${event ? event.description || '' : ''}</textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="eventDate" class="required">Date</label>
-                    <input type="date" id="eventDate" name="date_start" required 
-                           value="${event ? event.date_start || '' : ''}">
-                </div>
-                <div class="form-group">
-                    <label for="eventTimeStart" class="required">Heure début</label>
-                    <input type="time" id="eventTimeStart" name="time_start" required 
-                           value="${event ? event.time_start || '' : ''}">
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="eventTimeEnd" class="required">Heure fin</label>
-                    <input type="time" id="eventTimeEnd" name="time_end" required 
-                           value="${event ? event.time_end || '' : ''}">
-                </div>
-                <div class="form-group">
-                    <label for="eventCapacity">Capacité max</label>
-                    <input type="number" id="eventCapacity" name="max_participants" min="1" max="200" 
-                           placeholder="Ex: 30" value="${event ? event.max_participants || '' : ''}">
+                
+                <div class="form-group floating-label">
+                    <textarea id="eventDescription" name="description" rows="4" required class="form-control"
+                              placeholder=" ">${event ? event.description || '' : ''}</textarea>
+                    <label for="eventDescription">Description <span class="required">*</span></label>
+                    <div class="form-icon"><i class="fas fa-align-left"></i></div>
                 </div>
             </div>
             
-
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="eventLocation" class="required">Lieu</label>
-                    <input type="text" id="eventLocation" name="location" required 
-                           placeholder="Ex: ODC Rabat - Salle de conférence"
-                           value="${event ? event.location || '' : ''}">
+            <div class="form-section">
+                <h4><i class="fas fa-clock"></i> Planning</h4>
+                
+                <div class="form-row">
+                    <div class="form-group floating-label">
+                        <input type="date" id="eventDate" name="date_start" required class="form-control"
+                               value="${event ? event.date_start || '' : ''}">
+                        <label for="eventDate">Date <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-calendar"></i></div>
+                    </div>
+                    <div class="form-group floating-label">
+                        <input type="time" id="eventTimeStart" name="time_start" required class="form-control"
+                               value="${event ? event.time_start || '' : ''}">
+                        <label for="eventTimeStart">Heure début <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-clock"></i></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="eventCity" class="required">Ville</label>
-                    <select id="eventCity" name="city" required>
-                        <option value="">Choisir une ville</option>
-                        <option value="rabat" ${event && event.city === 'rabat' ? 'selected' : ''}>Rabat</option>
-                        <option value="agadir" ${event && event.city === 'agadir' ? 'selected' : ''}>Agadir</option>
-                        <option value="benmisk" ${event && event.city === 'benmisk' ? 'selected' : ''}>Ben M'sik</option>
-                        <option value="sidimaarouf" ${event && event.city === 'sidimaarouf' ? 'selected' : ''}>Sidi Maarouf</option>
-                    </select>
+                
+                <div class="form-row">
+                    <div class="form-group floating-label">
+                        <input type="time" id="eventTimeEnd" name="time_end" required class="form-control"
+                               value="${event ? event.time_end || '' : ''}">
+                        <label for="eventTimeEnd">Heure fin <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="form-group floating-label">
+                        <input type="number" id="eventCapacity" name="max_participants" min="1" max="200" 
+                               class="form-control" placeholder=" " value="${event ? event.max_participants || '' : ''}">
+                        <label for="eventCapacity">Capacité max</label>
+                        <div class="form-icon"><i class="fas fa-users"></i></div>
+                    </div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="eventSpeaker">Intervenant(s)</label>
-                <input type="text" id="eventSpeaker" name="speaker" 
-                       placeholder="Ex: Dr. Ahmed Benali, Expert en IA"
-                       value="${event ? event.speaker || '' : ''}">
+            <div class="form-section">
+                <h4><i class="fas fa-map-marker-alt"></i> Localisation</h4>
+                
+                <div class="form-row">
+                    <div class="form-group floating-label">
+                        <input type="text" id="eventLocation" name="location" required class="form-control"
+                               placeholder=" " value="${event ? event.location || '' : ''}">
+                        <label for="eventLocation">Lieu <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-map-pin"></i></div>
+                    </div>
+                    <div class="form-group floating-label">
+                        <select id="eventCity" name="city" required class="form-control">
+                            <option value="">Choisir une ville</option>
+                            <option value="rabat" ${event && event.city === 'rabat' ? 'selected' : ''}>Rabat</option>
+                            <option value="agadir" ${event && event.city === 'agadir' ? 'selected' : ''}>Agadir</option>
+                            <option value="benmisk" ${event && event.city === 'benmisk' ? 'selected' : ''}>Ben M'sik</option>
+                            <option value="sidimaarouf" ${event && event.city === 'sidimaarouf' ? 'selected' : ''}>Sidi Maarouf</option>
+                        </select>
+                        <label for="eventCity">Ville <span class="required">*</span></label>
+                        <div class="form-icon"><i class="fas fa-city"></i></div>
+                    </div>
+                </div>
+                
+                <div class="form-group floating-label">
+                    <input type="text" id="eventSpeaker" name="speaker" class="form-control"
+                           placeholder=" " value="${event ? event.speaker || '' : ''}">
+                    <label for="eventSpeaker">Intervenant(s)</label>
+                    <div class="form-icon"><i class="fas fa-microphone"></i></div>
+                </div>
             </div>
             
             <div class="form-section">
                 <h4><i class="fas fa-image"></i> Image de l'événement</h4>
-                <div id="eventImageUploader" class="image-uploader-section"></div>
+                <div class="image-upload-zone">
+                    <div class="file-upload">
+                        <input type="file" id="eventImageFile" accept="image/*" onchange="handleEventImageUpload(this)">
+                        <label for="eventImageFile">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Cliquez pour sélectionner ou glissez une image</span>
+                            <small>PNG, JPG, JPEG jusqu'à 5MB</small>
+                        </label>
+                    </div>
+                    <div class="image-preview" id="eventImagePreview" style="display: none;">
+                        <img id="eventPreviewImg" src="" alt="Aperçu">
+                        <button type="button" class="remove-image" onclick="removeEventImage()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
                 <input type="hidden" id="eventImage" name="image" value="${event?.image || ''}">
             </div>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="eventPrice">Prix (MAD)</label>
-                    <input type="number" id="eventPrice" name="price" min="0" step="10" 
-                           placeholder="0 pour gratuit" value="${event ? event.price || '' : ''}">
-                </div>
-                <div class="form-group">
-                    <label for="eventStatus">Statut</label>
-                    <select id="eventStatus" name="status">
-                        <option value="ouvert" ${event && event.status === 'ouvert' ? 'selected' : ''}>Ouvert aux inscriptions</option>
-                        <option value="complet" ${event && event.status === 'complet' ? 'selected' : ''}>Complet</option>
-                        <option value="annule" ${event && event.status === 'annule' ? 'selected' : ''}>Annulé</option>
-                        <option value="reporte" ${event && event.status === 'reporte' ? 'selected' : ''}>Reporté</option>
-                    </select>
+            <div class="form-section">
+                <h4><i class="fas fa-link"></i> Inscription</h4>
+                
+                <div class="form-row">
+                    <div class="form-group floating-label">
+                        <input type="number" id="eventPrice" name="price" min="0" step="10" class="form-control"
+                               placeholder=" " value="${event ? event.price || '' : ''}">
+                        <label for="eventPrice">Prix (MAD)</label>
+                        <div class="form-icon"><i class="fas fa-euro-sign"></i></div>
+                        <small class="form-help">0 pour gratuit</small>
+                    </div>
+                    <div class="form-group floating-label">
+                        <input type="url" id="eventRegistrationUrl" name="registration_url" class="form-control"
+                               placeholder=" " value="${event ? event.registration_url || '' : ''}">
+                        <label for="eventRegistrationUrl">Lien d'inscription</label>
+                        <div class="form-icon"><i class="fas fa-external-link-alt"></i></div>
+                    </div>
                 </div>
             </div>
             
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="cancelEvent">Annuler</button>
-                <button type="submit" class="btn btn-primary">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <button type="submit" class="btn btn-primary btn-form">
                     <i class="fas fa-save"></i>
-                    ${event ? 'Mettre à jour' : 'Créer l\'événement'}
+                    ${event ? 'Mettre à jour l\'événement' : 'Créer l\'événement'}
                 </button>
             </div>
         </form>
@@ -1489,11 +1577,18 @@ function showEventModal(event = null) {
     
     setupEventFormHandlers();
     
-    setTimeout(() => {
-        createEventImageUploader('eventImageUploader', event?.image || '');
-    }, 100);
+    // Initialiser l'upload d'image si une image existe
+    if (event?.image) {
+        const preview = document.getElementById('eventImagePreview');
+        const img = document.getElementById('eventPreviewImg');
+        img.src = event.image;
+        preview.style.display = 'block';
+    }
     
     modal.classList.add('show');
+    
+    // Activer les labels flottants
+    initFloatingLabels();
     
     console.log('✅ Modal d\'événement affiché', event ? 'mode édition' : 'mode création');
 }
@@ -2218,3 +2313,139 @@ window.AdminFunctions = {
     events: () => events,
     formations: () => formations
 };
+
+// Fonction pour initialiser les labels flottants
+function initFloatingLabels() {
+    const floatingGroups = document.querySelectorAll('.floating-label');
+    
+    floatingGroups.forEach(group => {
+        const input = group.querySelector('input, select, textarea');
+        const label = group.querySelector('label');
+        
+        if (!input || !label) return;
+        
+        // Fonction pour vérifier si le champ a une valeur
+        function checkValue() {
+            if (input.value && input.value.trim() !== '') {
+                group.classList.add('has-value');
+            } else {
+                group.classList.remove('has-value');
+            }
+        }
+        
+        // Événements pour la gestion des labels flottants
+        input.addEventListener('focus', () => {
+            group.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', () => {
+            group.classList.remove('focused');
+            checkValue();
+        });
+        
+        input.addEventListener('input', checkValue);
+        input.addEventListener('change', checkValue);
+        
+        // Vérification initiale
+        checkValue();
+    });
+}
+
+// Fonctions pour l'upload d'images des formations
+function handleFormationImageUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+        showNotification('Veuillez sélectionner un fichier image valide', 'error');
+        return;
+    }
+    
+    // Vérifier la taille (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('L\'image doit faire moins de 5MB', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('formationImagePreview');
+        const img = document.getElementById('formationPreviewImg');
+        const hiddenInput = document.getElementById('formationImage');
+        
+        img.src = e.target.result;
+        hiddenInput.value = e.target.result;
+        preview.style.display = 'block';
+        
+        // Masquer la zone de upload
+        const uploadZone = document.querySelector('.file-upload');
+        if (uploadZone) uploadZone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeFormationImage() {
+    const preview = document.getElementById('formationImagePreview');
+    const hiddenInput = document.getElementById('formationImage');
+    const fileInput = document.getElementById('formationImageFile');
+    const uploadZone = document.querySelector('.file-upload');
+    
+    preview.style.display = 'none';
+    hiddenInput.value = '';
+    fileInput.value = '';
+    if (uploadZone) uploadZone.style.display = 'block';
+}
+
+// Fonctions pour l'upload d'images des événements
+function handleEventImageUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+        showNotification('Veuillez sélectionner un fichier image valide', 'error');
+        return;
+    }
+    
+    // Vérifier la taille (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('L\'image doit faire moins de 5MB', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('eventImagePreview');
+        const img = document.getElementById('eventPreviewImg');
+        const hiddenInput = document.getElementById('eventImage');
+        
+        img.src = e.target.result;
+        hiddenInput.value = e.target.result;
+        preview.style.display = 'block';
+        
+        // Masquer la zone de upload
+        const uploadZone = document.querySelector('.file-upload');
+        if (uploadZone) uploadZone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeEventImage() {
+    const preview = document.getElementById('eventImagePreview');
+    const hiddenInput = document.getElementById('eventImage');
+    const fileInput = document.getElementById('eventImageFile');
+    const uploadZone = document.querySelector('.file-upload');
+    
+    preview.style.display = 'none';
+    hiddenInput.value = '';
+    fileInput.value = '';
+    if (uploadZone) uploadZone.style.display = 'block';
+}
+
+// Exposer les nouvelles fonctions globalement
+window.handleFormationImageUpload = handleFormationImageUpload;
+window.handleEventImageUpload = handleEventImageUpload;
+window.removeFormationImage = removeFormationImage;
+window.removeEventImage = removeEventImage;
+window.initFloatingLabels = initFloatingLabels;
