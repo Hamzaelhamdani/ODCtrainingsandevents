@@ -1636,7 +1636,7 @@ function updateResultsCounter() {
 
 async function loadEventsTable() {
     try {
-        console.log('🔄 Chargement de la table des événements...');
+        console.log('🔄 Chargement des événements...');
         
         if (!window.SupabaseAPI) {
             throw new Error('API Supabase non disponible');
@@ -1653,21 +1653,340 @@ async function loadEventsTable() {
             console.log('🔍 Premier événement:', events[0]);
         }
         
-        renderEventsTable();
-        
+        renderEventsGrid();
+        updateEventsStats();
         updateDashboardStats();
         
     } catch (error) {
         console.error('❌ Erreur lors du chargement des événements:', error);
         showNotification('Erreur lors du chargement des événements: ' + error.message, 'error');
         
-        const tbody = document.getElementById('eventsTableBody');
-        if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
-                Erreur de chargement des données: ${error.message}
-            </td></tr>`;
+        const grid = document.getElementById('eventsGrid');
+        if (grid) {
+            grid.innerHTML = `<div style="text-align: center; padding: 3rem; color: #666; grid-column: 1 / -1;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ffc107;"></i>
+                <h3>Erreur de chargement</h3>
+                <p>Impossible de charger les événements: ${error.message}</p>
+            </div>`;
         }
     }
+}
+
+function updateEventsStats() {
+    const totalCount = events.length;
+    const activeCount = events.filter(event => event.status === 'active').length;
+    const today = new Date();
+    const upcomingCount = events.filter(event => {
+        const eventDate = new Date(event.date_start);
+        return eventDate >= today && event.status === 'active';
+    }).length;
+    
+    const totalEl = document.getElementById('totalEventsCount');
+    const activeEl = document.getElementById('activeEventsCount');
+    const upcomingEl = document.getElementById('upcomingEventsCount');
+    
+    if (totalEl) totalEl.textContent = totalCount;
+    if (activeEl) activeEl.textContent = activeCount;
+    if (upcomingEl) upcomingEl.textContent = upcomingCount;
+}
+
+function renderEventsGrid() {
+    console.log('🎨 Rendu de la grille des événements...');
+    
+    const grid = document.getElementById('eventsGrid');
+    if (!grid) {
+        console.error('❌ Élément eventsGrid introuvable');
+        return;
+    }
+    
+    console.log(`📊 Rendu de ${events.length} événements`);
+    
+    if (events.length === 0) {
+        console.log('📝 Aucun événement à afficher');
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #666; grid-column: 1 / -1;">
+                <i class="fas fa-calendar-plus" style="font-size: 4rem; margin-bottom: 1rem; color: #FF7900;"></i>
+                <h3>Aucun événement</h3>
+                <p>Commencez par créer votre premier événement</p>
+                <button class="btn btn-primary" onclick="handleAddButton()" style="margin-top: 1rem;">
+                    <i class="fas fa-plus"></i> Créer un événement
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = events.map(event => {
+        const eventDate = new Date(event.date_start);
+        const eventEndDate = event.date_end ? new Date(event.date_end) : eventDate;
+        const today = new Date();
+        const isUpcoming = eventDate >= today;
+        const isPast = eventEndDate < today;
+        
+        const formattedDate = eventDate.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+        
+        const formattedTime = event.time_start ? 
+            event.time_start.slice(0, 5) : '00:00';
+        
+        let statusClass = '';
+        let statusLabel = '';
+        let statusIcon = '';
+        
+        if (isPast) {
+            statusClass = 'completed';
+            statusLabel = 'Terminé';
+            statusIcon = 'fa-check-circle';
+        } else if (event.status === 'active') {
+            statusClass = 'active';
+            statusLabel = isUpcoming ? 'À venir' : 'En cours';
+            statusIcon = 'fa-calendar-check';
+        } else {
+            statusClass = 'cancelled';
+            statusLabel = 'Annulé';
+            statusIcon = 'fa-calendar-times';
+        }
+        
+        const participantsInfo = event.max_participants ? 
+            `${event.registered_count || 0}/${event.max_participants}` : 
+            `${event.registered_count || 0}`;
+        
+        const imageUrl = event.image_url || 'https://via.placeholder.com/400x200/FF7900/FFFFFF?text=Événement+ODC';
+        
+        return `
+            <div class="event-card" data-event-id="${event.id}">
+                <div class="event-image-container">
+                    <img src="${imageUrl}" alt="${event.title}" class="event-image" onerror="this.src='https://via.placeholder.com/400x200/FF7900/FFFFFF?text=Événement+ODC'">
+                    <div class="event-image-overlay">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                
+                <div class="event-card-header">
+                    <h3 class="event-card-title">
+                        <i class="fas ${statusIcon}"></i>
+                        ${event.title}
+                    </h3>
+                    <div class="event-card-meta">
+                        <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                        <span><i class="fas fa-clock"></i> ${formattedTime}</span>
+                    </div>
+                </div>
+                
+                <div class="event-card-body">
+                    <div class="event-info-grid">
+                        <div class="event-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${event.city || 'Non défini'}</span>
+                        </div>
+                        <div class="event-info-item">
+                            <i class="fas fa-users"></i>
+                            <span>${participantsInfo}</span>
+                        </div>
+                        <div class="event-info-item">
+                            <i class="fas fa-building"></i>
+                            <span>${event.location || 'À définir'}</span>
+                        </div>
+                        <div class="event-info-item">
+                            <i class="fas fa-link"></i>
+                            <span>${event.registration_url ? 'Inscription ouverte' : 'Sur place'}</span>
+                        </div>
+                    </div>
+                    
+                    ${event.description ? `
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; line-height: 1.5;">
+                            ${event.description.slice(0, 120)}${event.description.length > 120 ? '...' : ''}
+                        </p>
+                    ` : ''}
+                </div>
+                
+                <div class="event-card-footer">
+                    <div class="event-status ${statusClass}">
+                        <i class="fas ${statusIcon}"></i>
+                        ${statusLabel}
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn-event view" onclick="viewEvent('${event.id}')" title="Voir les détails">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-event edit" onclick="editEvent('${event.id}')" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-event delete" onclick="deleteEvent('${event.id}')" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Fonctions pour les actions sur les événements
+function viewEvent(eventId) {
+    const event = events.find(e => e.id === eventId);
+    if (!event) {
+        showNotification('Événement non trouvé', 'error');
+        return;
+    }
+    
+    // Afficher les détails de l'événement dans une modal
+    showEventDetailsModal(event);
+}
+
+function editEvent(eventId) {
+    const event = events.find(e => e.id === eventId);
+    if (!event) {
+        showNotification('Événement non trouvé', 'error');
+        return;
+    }
+    
+    currentEditId = eventId;
+    showEventModal(event);
+}
+
+async function deleteEvent(eventId) {
+    const event = events.find(e => e.id === eventId);
+    if (!event) {
+        showNotification('Événement non trouvé', 'error');
+        return;
+    }
+    
+    const confirmed = confirm(`Êtes-vous sûr de vouloir supprimer l'événement "${event.title}" ?\n\nCette action est irréversible.`);
+    if (!confirmed) return;
+    
+    try {
+        await window.SupabaseAPI.deleteEvent(eventId);
+        showNotification('Événement supprimé avec succès', 'success');
+        await loadEventsTable(); // Recharger la liste
+    } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        showNotification('Erreur lors de la suppression: ' + error.message, 'error');
+    }
+}
+
+function showEventDetailsModal(event) {
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    
+    modalTitle.innerHTML = `
+        <i class="fas fa-calendar-alt"></i>
+        Détails de l'événement
+    `;
+    
+    const eventDate = new Date(event.date_start);
+    const eventEndDate = event.date_end ? new Date(event.date_end) : null;
+    const formattedDate = eventDate.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+    
+    const formattedTime = event.time_start ? event.time_start.slice(0, 5) : 'Non défini';
+    const endTime = event.time_end ? event.time_end.slice(0, 5) : null;
+    
+    modalBody.innerHTML = `
+        <div class="event-details">
+            ${event.image_url ? `
+                <div class="event-detail-image">
+                    <img src="${event.image_url}" alt="${event.title}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem;">
+                </div>
+            ` : ''}
+            
+            <div class="event-detail-grid">
+                <div class="event-detail-section">
+                    <h4><i class="fas fa-info-circle"></i> Informations générales</h4>
+                    <div class="detail-item">
+                        <label>Titre :</label>
+                        <span>${event.title}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Description :</label>
+                        <span>${event.description || 'Aucune description'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Statut :</label>
+                        <span class="badge badge-${event.status === 'active' ? 'success' : 'danger'}">
+                            ${event.status === 'active' ? 'Actif' : 'Inactif'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="event-detail-section">
+                    <h4><i class="fas fa-clock"></i> Planning</h4>
+                    <div class="detail-item">
+                        <label>Date :</label>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Heure de début :</label>
+                        <span>${formattedTime}</span>
+                    </div>
+                    ${endTime ? `
+                        <div class="detail-item">
+                            <label>Heure de fin :</label>
+                            <span>${endTime}</span>
+                        </div>
+                    ` : ''}
+                    ${eventEndDate ? `
+                        <div class="detail-item">
+                            <label>Date de fin :</label>
+                            <span>${eventEndDate.toLocaleDateString('fr-FR')}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="event-detail-section">
+                    <h4><i class="fas fa-map-marker-alt"></i> Localisation</h4>
+                    <div class="detail-item">
+                        <label>Ville :</label>
+                        <span>${event.city || 'Non définie'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Lieu exact :</label>
+                        <span>${event.location || 'À définir'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Participants max :</label>
+                        <span>${event.max_participants || 'Illimité'}</span>
+                    </div>
+                </div>
+                
+                <div class="event-detail-section">
+                    <h4><i class="fas fa-link"></i> Inscription</h4>
+                    ${event.registration_url ? `
+                        <div class="detail-item">
+                            <label>Lien d'inscription :</label>
+                            <a href="${event.registration_url}" target="_blank" class="btn btn-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Ouvrir le formulaire
+                            </a>
+                        </div>
+                    ` : `
+                        <div class="detail-item">
+                            <label>Inscription :</label>
+                            <span>Sur place uniquement</span>
+                        </div>
+                    `}
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; gap: 1rem; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal()">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+            <button class="btn btn-warning" onclick="editEvent('${event.id}')">
+                <i class="fas fa-edit"></i> Modifier
+            </button>
+        </div>
+    `;
+    
+    modal.classList.add('show');
 }
 
 function renderEventsTable() {

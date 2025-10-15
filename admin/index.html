@@ -274,23 +274,73 @@
 
                 
                 <div id="events-page" class="content-page">
-                    <div class="page-controls">
-                        <div class="search-bar">
-                            <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Rechercher un événement..." id="searchEvents">
-                        </div>
-                        <div class="filter-controls">
-                            <select id="eventsCityFilter">
-                                <option value="">Toutes les villes</option>
-                                <option value="rabat">Rabat</option>
-                                <option value="agadir">Agadir</option>
-                                <option value="benmisk">Ben M'sik</option>
-                                <option value="sidimaarouf">Sidi Maarouf</option>
-                            </select>
+                    <!-- Header événements -->
+                    <div class="events-header">
+                        <h2>
+                            <i class="fas fa-calendar-alt"></i>
+                            Gestion des événements
+                        </h2>
+                        <div class="events-stats">
+                            <div class="events-stat">
+                                <div class="events-stat-number" id="totalEventsCount">0</div>
+                                <div class="events-stat-label">Total</div>
+                            </div>
+                            <div class="events-stat">
+                                <div class="events-stat-number" id="activeEventsCount">0</div>
+                                <div class="events-stat-label">Actifs</div>
+                            </div>
+                            <div class="events-stat">
+                                <div class="events-stat-number" id="upcomingEventsCount">0</div>
+                                <div class="events-stat-label">À venir</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="data-table-container">
+
+                    <!-- Filtres événements -->
+                    <div class="events-filters">
+                        <h4>
+                            <i class="fas fa-filter"></i>
+                            Filtres et recherche
+                        </h4>
+                        <div class="filter-row">
+                            <div class="form-group">
+                                <label for="searchEvents">Rechercher</label>
+                                <div class="search-bar">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="form-control" id="searchEvents" placeholder="Rechercher par titre, lieu...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventsStatusFilter">Statut</label>
+                                <select class="form-control" id="eventsStatusFilter">
+                                    <option value="">Tous</option>
+                                    <option value="active">Actif</option>
+                                    <option value="inactive">Inactif</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventsCityFilter">Ville</label>
+                                <select class="form-control" id="eventsCityFilter">
+                                    <option value="">Toutes les villes</option>
+                                    <option value="rabat">Rabat</option>
+                                    <option value="agadir">Agadir</option>
+                                    <option value="benmisk">Ben M'sik</option>
+                                    <option value="sidimaarouf">Sidi Maarouf</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grille des événements -->
+                    <div class="events-grid" id="eventsGrid">
+                        <!-- Les cartes d'événements seront générées ici -->
+                    </div>
+
+                    <!-- Vue tableau alternative -->
+                    <div class="data-table-container" id="eventsTableContainer" style="display: none;">
+                        <div class="table-header">
+                            <h3 class="table-title">Vue tableau</h3>
+                        </div>
                         <table class="data-table" id="eventsTable">
                             <thead>
                                 <tr>
