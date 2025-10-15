@@ -1,0 +1,38 @@
+# Netlify Configuration
+# Configuration pour le déploiement automatique sur Netlify
+
+[build]
+  # Pas de commande de build nécessaire (site statique)
+  command = ""
+  # Dossier à publier (racine du projet)
+  publish = "."
+
+# Redirections pour SPA (Single Page Application)
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200
+
+# Headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.supabase.co; connect-src 'self' https://*.supabase.co"
+
+# Headers spécifiques pour les fichiers admin
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Gestion des erreurs 404
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
