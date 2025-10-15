@@ -354,7 +354,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     setTimeout(() => {
         loadContent();
-        setupFilters(); // Ajouter la gestion des filtres
+        setupFilters();
+        setupContentFilters();
     }, 100);
     console.log('✅ Application initialisée');
 });
@@ -370,6 +371,51 @@ function setupFilters() {
             applyFilter(selectedCity);
         });
     });
+}
+
+function setupContentFilters() {
+    console.log('🔍 Configuration des filtres de contenu...');
+    const contentFilterButtons = document.querySelectorAll('.content-filter-btn');
+    contentFilterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            contentFilterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const selectedType = this.getAttribute('data-type');
+            console.log('📋 Type de contenu sélectionné:', selectedType);
+            applyContentFilter(selectedType);
+        });
+    });
+}
+
+function applyContentFilter(type) {
+    const formationsSection = document.getElementById('formations');
+    const fablabSection = document.getElementById('fablab');
+    const eventsSection = document.getElementById('events');
+    const calendarSection = document.querySelector('.calendar-section');
+    
+    if (type === 'all') {
+        if (formationsSection) formationsSection.style.display = 'block';
+        if (fablabSection) fablabSection.style.display = 'block';
+        if (eventsSection) eventsSection.style.display = 'block';
+        if (calendarSection) calendarSection.style.display = 'block';
+    } else if (type === 'formations') {
+        if (formationsSection) formationsSection.style.display = 'block';
+        if (fablabSection) fablabSection.style.display = 'block';
+        if (eventsSection) eventsSection.style.display = 'none';
+        if (calendarSection) calendarSection.style.display = 'none';
+    } else if (type === 'events') {
+        if (formationsSection) formationsSection.style.display = 'none';
+        if (fablabSection) fablabSection.style.display = 'none';
+        if (eventsSection) eventsSection.style.display = 'block';
+        if (calendarSection) calendarSection.style.display = 'block';
+    } else if (type === 'startups') {
+        if (formationsSection) formationsSection.style.display = 'none';
+        if (fablabSection) fablabSection.style.display = 'none';
+        if (eventsSection) eventsSection.style.display = 'block';
+        if (calendarSection) calendarSection.style.display = 'block';
+    }
+    
+    console.log(`✅ Filtre de contenu appliqué: ${type}`);
 }
 function applyFilter(city) {
     const formationCards = document.querySelectorAll('.formation-card');
